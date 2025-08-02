@@ -3,13 +3,17 @@ import { DatabaseTestController } from './database-test.controller';
 import { DatabaseTestService } from './database-test.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { DatabaseTest } from './entities/database-test.entity';
+import { ThrottlerModule } from '@nestjs/throttler';
 
 describe('DatabaseTestController', () => {
     let controller: DatabaseTestController;
-    let service: DatabaseTestService;
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
+            imports: [ThrottlerModule.forRoot([{
+                ttl: 60000,
+                limit: 10,
+            }])],
             controllers: [DatabaseTestController],
             providers: [
                 DatabaseTestService,
@@ -29,7 +33,6 @@ describe('DatabaseTestController', () => {
         }).compile();
 
         controller = module.get<DatabaseTestController>(DatabaseTestController);
-        service = module.get<DatabaseTestService>(DatabaseTestService);
     });
 
     it('should be defined', () => {

@@ -6,14 +6,17 @@ import {
     Patch,
     Param,
     Delete,
+    UseGuards,
 } from '@nestjs/common';
 import { DatabaseTestService } from './database-test.service';
 import { CreateDatabaseTestDto } from './dto/create-database-test.dto';
 import { UpdateDatabaseTestDto } from './dto/update-database-test.dto';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ThrottlerGuard } from '@nestjs/throttler';
 
 @ApiTags('Database Test')
 @Controller('database-test')
+@UseGuards(ThrottlerGuard)
 export class DatabaseTestController {
     constructor(private readonly databaseTestService: DatabaseTestService) {}
 
