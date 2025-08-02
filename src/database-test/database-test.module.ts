@@ -5,8 +5,8 @@ import { DatabaseTestController } from './database-test.controller';
 import { DatabaseTest } from './entities/database-test.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([DatabaseTest])],
-  controllers: [DatabaseTestController],
-  providers: [DatabaseTestService],
+    imports: [TypeOrmModule.forFeature([DatabaseTest])],
+    controllers: [DatabaseTestController],
+    providers: [DatabaseTestService],
 })
 export class DatabaseTestModule {}
