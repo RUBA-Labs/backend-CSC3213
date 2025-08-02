@@ -16,8 +16,8 @@ dotenv.config();
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      autoLoadEntities: true,   // auto-load entities registered via TypeOrmModule.forFeature()
-      synchronize: true,        // ⚠️ Disable this in production to avoid data loss
+      autoLoadEntities: true, // auto-load entities registered via TypeOrmModule.forFeature()
+      synchronize: true, // ⚠️ Disable this in production to avoid data loss
     }),
     DatabaseTestModule,
   ],
@@ -25,4 +25,3 @@ dotenv.config();
   providers: [AppService],
 })
 export class AppModule {}
-
