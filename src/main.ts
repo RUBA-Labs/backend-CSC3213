@@ -14,6 +14,7 @@ async function bootstrap() {
             .setDescription('The API documentation for the CSC3213 project.')
             .setVersion('1.0')
             .addTag('API')
+            .addBearerAuth()
             .build();
         const document = SwaggerModule.createDocument(app, config);
         SwaggerModule.setup('api', app, document);
