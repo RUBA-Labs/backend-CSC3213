@@ -7,42 +7,55 @@ import { DatabaseTest } from './entities/database-test.entity';
 
 @Injectable()
 export class DatabaseTestService {
-  constructor(
-    @InjectRepository(DatabaseTest)
-    private readonly databaseTestRepository: Repository<DatabaseTest>,
-  ) {}
+    constructor(
+        @InjectRepository(DatabaseTest)
+        private readonly databaseTestRepository: Repository<DatabaseTest>,
+    ) {}
 
-  create(createDatabaseTestDto: CreateDatabaseTestDto): Promise<DatabaseTest> {
-    const databaseTest = this.databaseTestRepository.create(createDatabaseTestDto);
-    return this.databaseTestRepository.save(databaseTest);
-  }
-
-  findAll(): Promise<DatabaseTest[]> {
-    return this.databaseTestRepository.find();
-  }
-
-  async findOne(id: number): Promise<DatabaseTest> {
-    const databaseTest = await this.databaseTestRepository.findOneBy({ id });
-    if (!databaseTest) {
-      throw new NotFoundException(`DatabaseTest with ID ${id} not found`);
+    create(
+        createDatabaseTestDto: CreateDatabaseTestDto,
+    ): Promise<DatabaseTest> {
+        const databaseTest = this.databaseTestRepository.create(
+            createDatabaseTestDto,
+        );
+        return this.databaseTestRepository.save(databaseTest);
     }
-    return databaseTest;
-  }
 
-  async update(id: number, updateDatabaseTestDto: UpdateDatabaseTestDto): Promise<DatabaseTest> {
-    const databaseTest = await this.databaseTestRepository.findOneBy({ id });
-    if (!databaseTest) {
-      throw new NotFoundException(`DatabaseTest with ID ${id} not found`);
+    findAll(): Promise<DatabaseTest[]> {
+        return this.databaseTestRepository.find();
     }
-    Object.assign(databaseTest, updateDatabaseTestDto);
-    return this.databaseTestRepository.save(databaseTest);
-  }
 
-  async remove(id: number): Promise<void> {
-    const databaseTest = await this.databaseTestRepository.findOneBy({ id });
-    if (!databaseTest) {
-      throw new NotFoundException(`DatabaseTest with ID ${id} not found`);
+    async findOne(id: number): Promise<DatabaseTest> {
+        const databaseTest = await this.databaseTestRepository.findOneBy({
+            id,
+        });
+        if (!databaseTest) {
+            throw new NotFoundException(`DatabaseTest with ID ${id} not found`);
+        }
+        return databaseTest;
     }
-    await this.databaseTestRepository.remove(databaseTest);
-  }
+
+    async update(
+        id: number,
+        updateDatabaseTestDto: UpdateDatabaseTestDto,
+    ): Promise<DatabaseTest> {
+        const databaseTest = await this.databaseTestRepository.findOneBy({
+            id,
+        });
+        if (!databaseTest) {
+            throw new NotFoundException(`DatabaseTest with ID ${id} not found`);
+        }
+        Object.assign(databaseTest, updateDatabaseTestDto);
+        return this.databaseTestRepository.save(databaseTest);
+    }
+
+    async remove(id: number): Promise<void> {
+        const databaseTest = await this.databaseTestRepository.findOneBy({
+            id,
+        });
+        if (!databaseTest) {
+            throw new NotFoundException(`DatabaseTest with ID ${id} not found`);
+        }
+        await this.databaseTestRepository.remove(databaseTest);
+    }
 }
