@@ -6,6 +6,7 @@ import { AppService } from './app.service';
 import { DatabaseTestModule } from './database-test/database-test.module';
 import { UserModule } from './user/user.module';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { AuthModule } from './auth/auth.module';
 
 dotenv.config();
 
@@ -35,6 +36,7 @@ dotenv.config();
         }),
         DatabaseTestModule,
         UserModule,
+        AuthModule,
     ],
     controllers: [AppController],
     providers: [AppService],

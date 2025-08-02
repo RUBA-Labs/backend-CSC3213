@@ -9,7 +9,10 @@ export class AppController {
     constructor(private readonly appService: AppService) {}
 
     // Handle GET requests at root "/"
-    @Throttle({ short: { limit: 3, ttl: 1000 }, long: { limit: 20, ttl: 60000 } })
+    @Throttle({
+        short: { limit: 3, ttl: 1000 },
+        long: { limit: 20, ttl: 60000 },
+    })
     @Get()
     getHello(): string {
         // Return the message from the service

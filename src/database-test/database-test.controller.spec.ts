@@ -10,10 +10,14 @@ describe('DatabaseTestController', () => {
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
-            imports: [ThrottlerModule.forRoot([{
-                ttl: 60000,
-                limit: 10,
-            }])],
+            imports: [
+                ThrottlerModule.forRoot([
+                    {
+                        ttl: 60000,
+                        limit: 10,
+                    },
+                ]),
+            ],
             controllers: [DatabaseTestController],
             providers: [
                 DatabaseTestService,
