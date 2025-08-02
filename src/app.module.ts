@@ -5,11 +5,24 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { DatabaseTestModule } from './database-test/database-test.module';
 import { UserModule } from './user/user.module';
+import { ThrottlerModule } from '@nestjs/throttler';
 
 dotenv.config();
 
 @Module({
     imports: [
+        ThrottlerModule.forRoot([
+            {
+                name: 'short',
+                ttl: 1000,
+                limit: 3,
+            },
+            {
+                name: 'long',
+                ttl: 60000,
+                limit: 20,
+            },
+        ]),
         TypeOrmModule.forRoot({
             type: 'mysql',
             host: process.env.DB_HOST,
