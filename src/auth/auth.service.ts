@@ -8,36 +8,36 @@ import { User } from '../user/entities/user.entity';
 
 @Injectable()
 export class AuthService {
-  constructor(
-    private userService: UserService,
-    private jwtService: JwtService,
-    private authRepo: AuthRepository,
-  ) {}
+    constructor(
+        private userService: UserService,
+        private jwtService: JwtService,
+        private authRepo: AuthRepository,
+    ) {}
 
-  async validateUser(email: string, password: string): Promise<User | null> {
-    const user = await this.userService.findByEmail(email);
-    if (user && (await bcrypt.compare(password, user.password))) {
-      return user;
+    async validateUser(email: string, password: string): Promise<User | null> {
+        const user = await this.userService.findByEmail(email);
+        if (user && (await bcrypt.compare(password, user.password))) {
+            return user;
+        }
+        return null;
     }
-    return null;
-  }
 
-  async login(loginDto: LoginDto) {
-    const user = await this.validateUser(loginDto.email, loginDto.password);
-    if (!user) throw new UnauthorizedException('Invalid credentials');
+    async login(loginDto: LoginDto) {
+        const user = await this.validateUser(loginDto.email, loginDto.password);
+        if (!user) throw new UnauthorizedException('Invalid credentials');
 
-    const payload = { sub: user.id, role: user.role };
-    const token = this.jwtService.sign(payload);
+        const payload = { sub: user.id, role: user.role };
+        const token = this.jwtService.sign(payload);
 
-    await this.authRepo.saveSession(user.id, token);
+        await this.authRepo.saveSession(user.id, token);
 
-    return {
-      access_token: token,
-      user: {
-        id: user.id,
-        email: user.email,
-        role: user.role,
-      },
-    };
-  }
+        return {
+            access_token: token,
+            user: {
+                id: user.id,
+                email: user.email,
+                role: user.role,
+            },
+        };
+    }
 }

@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import * as dotenv from 'dotenv';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { DatabaseTestModule } from './database-test/database-test.module';
@@ -8,10 +8,11 @@ import { UserModule } from './user/user.module';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { AuthModule } from './auth/auth.module';
 
-dotenv.config();
-
 @Module({
     imports: [
+        ConfigModule.forRoot({
+            isGlobal: true, // Make the config module global
+        }),
         ThrottlerModule.forRoot([
             {
                 name: 'short',
@@ -24,15 +25,19 @@ dotenv.config();
                 limit: 20,
             },
         ]),
-        TypeOrmModule.forRoot({
-            type: 'mysql',
-            host: process.env.DB_HOST,
-            port: parseInt(process.env.DB_PORT || '3306', 10),
-            username: process.env.DB_USERNAME,
-            password: process.env.DB_PASSWORD,
-            database: process.env.DB_NAME,
-            autoLoadEntities: true, // auto-load entities registered via TypeOrmModule.forFeature()
-            synchronize: true, // ⚠️ Disable this in production to avoid data loss
+        TypeOrmModule.forRootAsync({
+            imports: [ConfigModule],
+            useFactory: (configService: ConfigService) => ({
+                type: 'mysql',
+                host: configService.get<string>('DB_HOST'),
+                port: configService.get<number>('DB_PORT'),
+                username: configService.get<string>('DB_USERNAME'),
+                password: configService.get<string>('DB_PASSWORD'),
+                database: configService.get<string>('DB_NAME'),
+                autoLoadEntities: true,
+                synchronize: true,
+            }),
+            inject: [ConfigService],
         }),
         DatabaseTestModule,
         UserModule,

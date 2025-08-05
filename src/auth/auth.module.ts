@@ -14,23 +14,23 @@ import { AuthSession } from './auth.entity';
 import { AuthRepository } from './auth.repository';
 
 @Module({
-  imports: [
-    UserModule,
-    PassportModule,
-    TypeOrmModule.forFeature([AuthSession]),
-    JwtModule.register({
-      secret: process.env.JWT_SECRET || 'supersecret',
-      signOptions: { expiresIn: '1d' },
-    }),
-  ],
-  controllers: [AuthController],
-  providers: [
-    AuthService,
-    JwtStrategy,
-    // LocalStrategy,
-    JwtAuthGuard,
-    RolesGuard,
-    AuthRepository,
-  ],
+    imports: [
+        UserModule,
+        PassportModule,
+        TypeOrmModule.forFeature([AuthSession]),
+        JwtModule.register({
+            secret: process.env.JWT_SECRET || 'supersecret',
+            signOptions: { expiresIn: '1d' },
+        }),
+    ],
+    controllers: [AuthController],
+    providers: [
+        AuthService,
+        JwtStrategy,
+        // LocalStrategy,
+        JwtAuthGuard,
+        RolesGuard,
+        AuthRepository,
+    ],
 })
 export class AuthModule {}
