@@ -12,12 +12,18 @@ import {
 import { DatabaseTestService } from './database-test.service';
 import { CreateDatabaseTestDto } from './dto/create-database-test.dto';
 import { UpdateDatabaseTestDto } from './dto/update-database-test.dto';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { ThrottlerGuard } from '@nestjs/throttler';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { RolesGuard } from '../auth/roles.guard';
+import { Roles } from '../auth/roles.decorator';
+import { Role } from '../user/role.enum';
 
 @ApiTags('Database Test')
+@ApiBearerAuth()
 @Controller('database-test')
-@UseGuards(ThrottlerGuard)
+@UseGuards(JwtAuthGuard, RolesGuard, ThrottlerGuard)
+@Roles(Role.DEVELOPER)
 export class DatabaseTestController {
     constructor(private readonly databaseTestService: DatabaseTestService) {}
 
