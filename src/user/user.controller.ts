@@ -19,10 +19,10 @@ import {
     ApiResponse,
     ApiBearerAuth,
 } from '@nestjs/swagger';
-import { Roles } from 'src/auth/roles.decorator';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-import { RolesGuard } from 'src/auth/roles.guard';
-import { Public } from 'src/auth/public.decorator';
+import { Roles } from '../auth/roles.decorator';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { RolesGuard } from '../auth/roles.guard';
+import { Public } from '../auth/public.decorator';
 import { Role } from './role.enum';
 
 @ApiTags('User')
@@ -44,17 +44,16 @@ export class UserController {
     }
 
     @Get()
-    @Roles(Role.ADMIN)
+    @Roles(Role.ADMIN, Role.DEVELOPER)
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Retrieve all users' })
     @ApiResponse({ status: 200, description: 'Return all users.' })
-    
     findAll() {
         return this.userService.findAll();
     }
 
     @Get(':id')
-    @Roles(Role.ADMIN)
+    @Roles(Role.ADMIN, Role.DEVELOPER)
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Retrieve a single user by ID' })
     @ApiResponse({ status: 200, description: 'Return the user.' })
@@ -64,7 +63,7 @@ export class UserController {
     }
 
     @Patch(':id')
-    @Roles(Role.ADMIN)
+    @Roles(Role.ADMIN, Role.DEVELOPER)
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Update a user' })
     @ApiResponse({
@@ -80,7 +79,7 @@ export class UserController {
     }
 
     @Delete(':id')
-    @Roles(Role.ADMIN)
+    @Roles(Role.ADMIN, Role.DEVELOPER)
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Delete a user' })
     @ApiResponse({

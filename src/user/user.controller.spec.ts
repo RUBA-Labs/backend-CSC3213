@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/unbound-method */
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { Role } from './role.enum';
-import { User } from './entities/user.entity';
 import { ThrottlerModule } from '@nestjs/throttler';
 
 describe('UserController', () => {
@@ -52,15 +53,22 @@ describe('UserController', () => {
                 password: 'password',
                 role: Role.STUDENT,
             };
-            const result: User = {
+
+            mockUserService.create.mockResolvedValue({
                 id: 1,
                 ...createUserDto,
                 createdAt: new Date(),
                 updatedAt: new Date(),
-            };
-            mockUserService.create.mockResolvedValue(result);
+            });
 
-            expect(await controller.create(createUserDto)).toBe(result);
+            expect(await controller.create(createUserDto)).toEqual(
+                expect.objectContaining({
+                    ...createUserDto,
+                    id: expect.any(Number),
+                    createdAt: expect.any(Date),
+                    updatedAt: expect.any(Date),
+                }),
+            );
             expect(service.create).toHaveBeenCalledWith(createUserDto);
         });
     });
