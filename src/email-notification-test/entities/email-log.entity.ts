@@ -2,21 +2,21 @@ import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 @Entity()
 export class EmailLog {
-  @PrimaryGeneratedColumn()
-  id: number;
+    @PrimaryGeneratedColumn()
+    id: number;
 
-  @Column()
-  to: string;
+    @Column()
+    to: string;
 
-  @Column()
-  subject: string;
+    @Column()
+    subject: string;
 
-  @Column({ type: 'text' })
-  body: string;
+    @Column({ type: 'text' })
+    body: string;
 
-  @Column()
-  status: string;
+    @Column()
+    status: string;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  timestamp: Date;
+    @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+    timestamp: Date;
 }

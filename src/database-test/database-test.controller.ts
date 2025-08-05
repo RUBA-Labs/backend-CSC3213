@@ -7,6 +7,7 @@ import {
     Param,
     Delete,
     UseGuards,
+    ParseIntPipe,
 } from '@nestjs/common';
 import { DatabaseTestService } from './database-test.service';
 import { CreateDatabaseTestDto } from './dto/create-database-test.dto';
@@ -42,8 +43,8 @@ export class DatabaseTestController {
     @ApiOperation({ summary: 'Retrieve a single database test entry by ID' })
     @ApiResponse({ status: 200, description: 'Return the record.' })
     @ApiResponse({ status: 404, description: 'Record not found.' })
-    findOne(@Param('id') id: string) {
-        return this.databaseTestService.findOne(+id);
+    findOne(@Param('id', ParseIntPipe) id: number) {
+        return this.databaseTestService.findOne(id);
     }
 
     @Patch(':id')
@@ -54,10 +55,10 @@ export class DatabaseTestController {
     })
     @ApiResponse({ status: 404, description: 'Record not found.' })
     update(
-        @Param('id') id: string,
+        @Param('id', ParseIntPipe) id: number,
         @Body() updateDatabaseTestDto: UpdateDatabaseTestDto,
     ) {
-        return this.databaseTestService.update(+id, updateDatabaseTestDto);
+        return this.databaseTestService.update(id, updateDatabaseTestDto);
     }
 
     @Delete(':id')
@@ -67,7 +68,7 @@ export class DatabaseTestController {
         description: 'The record has been successfully deleted.',
     })
     @ApiResponse({ status: 404, description: 'Record not found.' })
-    remove(@Param('id') id: string) {
-        return this.databaseTestService.remove(+id);
+    remove(@Param('id', ParseIntPipe) id: number) {
+        return this.databaseTestService.remove(id);
     }
 }
