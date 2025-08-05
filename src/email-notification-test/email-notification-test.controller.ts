@@ -1,10 +1,17 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards } from '@nestjs/common';
 import { EmailNotificationTestService } from './email-notification-test.service';
 import { SendEmailDto } from './dto/send-email.dto';
-import { ApiTags, ApiOperation, ApiBody } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { RolesGuard } from '../auth/roles.guard';
+import { Roles } from '../auth/roles.decorator';
+import { Role } from '../user/role.enum';
 
 @ApiTags('Email Notification Test')
+@ApiBearerAuth()
 @Controller('email-notification-test')
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(Role.DEVELOPER)
 export class EmailNotificationTestController {
     constructor(
         private readonly emailNotificationTestService: EmailNotificationTestService,
