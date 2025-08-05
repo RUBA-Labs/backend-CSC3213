@@ -1,8 +1,11 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { ROLES_KEY } from './roles.decorator';
+import { Request } from 'express';
+
+interface AuthenticatedRequest extends Request {
+    user: { userId: number; role: string };
+}
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -16,7 +19,9 @@ export class RolesGuard implements CanActivate {
 
         if (!roles) return true;
 
-        const { user } = context.switchToHttp().getRequest();
+        const { user } = context
+            .switchToHttp()
+            .getRequest<AuthenticatedRequest>();
         return roles.includes(user.role);
     }
 }
