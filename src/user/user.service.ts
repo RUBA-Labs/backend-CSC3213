@@ -2,6 +2,7 @@ import {
     Injectable,
     NotFoundException,
     ConflictException,
+    BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -9,6 +10,7 @@ import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import * as bcrypt from 'bcrypt';
+import { EmailValidationService } from '../email-validation/email-validation.service';
 
 @Injectable()
 export class UserService {
@@ -18,9 +20,18 @@ export class UserService {
     constructor(
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
+        private readonly emailValidationService: EmailValidationService,
     ) {}
 
     async create(createUserDto: CreateUserDto): Promise<User> {
+        const emailStatus = await this.emailValidationService.getEmailStatus(
+            createUserDto.email,
+        );
+
+        if (!emailStatus || !emailStatus.isValidated) {
+            throw new BadRequestException('Email is not validated.');
+        }
+
         const existingUser = await this.findByEmail(createUserDto.email);
         if (existingUser) {
             throw new ConflictException('User with this email already exists');
