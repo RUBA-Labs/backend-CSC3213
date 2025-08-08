@@ -6,10 +6,12 @@ import { JwtService } from '@nestjs/jwt';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { User } from '../user/entities/user.entity';
 import { Repository } from 'typeorm';
-import { AuthSession } from './auth.entity';
-import { AuthRepository } from './auth.repository';
-import { UserService } from '../user/user.service';
 import { Role } from '../user/role.enum';
+import { Session } from '../session/entities/session.entity';
+import { SessionService } from '../session/session.service';
+import { UserService } from '../user/user.service';
+
+import { Request } from 'express';
 
 describe('AuthController', () => {
     let controller: AuthController;
@@ -22,21 +24,13 @@ describe('AuthController', () => {
                 AuthService,
                 UserService,
                 JwtService,
-                AuthService,
-                UserService,
-                JwtService,
-                {
-                    provide: AuthRepository,
-                    useValue: {
-                        saveSession: jest.fn(),
-                    },
-                },
+                SessionService,
                 {
                     provide: getRepositoryToken(User),
                     useClass: Repository,
                 },
                 {
-                    provide: getRepositoryToken(AuthSession),
+                    provide: getRepositoryToken(Session),
                     useClass: Repository,
                 },
             ],
@@ -68,7 +62,11 @@ describe('AuthController', () => {
                 Promise.resolve(result),
             );
 
-            expect(await controller.login(loginDto)).toBe(result);
+            const req = { ip: '127.0.0.1', headers: { 'user-agent': 'jest' } };
+
+            expect(await controller.login(loginDto, req as Request)).toBe(
+                result,
+            );
         });
     });
 });
