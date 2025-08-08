@@ -8,6 +8,7 @@ import { UserModule } from './user/user.module';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { AuthModule } from './auth/auth.module';
 import { EmailNotificationTestModule } from './email-notification-test/email-notification-test.module';
+import { SessionModule } from './session/session.module';
 
 @Module({
     imports: [
@@ -44,6 +45,7 @@ import { EmailNotificationTestModule } from './email-notification-test/email-not
         UserModule,
         AuthModule,
         EmailNotificationTestModule,
+        SessionModule,
     ],
     controllers: [AppController],
     providers: [AppService],

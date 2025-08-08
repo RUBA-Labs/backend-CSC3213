@@ -2,20 +2,21 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
 import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
-import { AuthRepository } from './auth.repository';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { User } from '../user/entities/user.entity';
 import { Repository } from 'typeorm';
-import { AuthSession } from './auth.entity';
 import { UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { Role } from '../user/role.enum';
+import { SessionService } from '../session/session.service';
+import { Session } from '../session/entities/session.entity';
 
 describe('AuthService', () => {
     let service: AuthService;
     let userService: UserService;
     let jwtService: JwtService;
-    let authRepo: AuthRepository;
+    let sessionService: SessionService;
+    let sessionRepository: Repository<Session>;
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
@@ -34,9 +35,10 @@ describe('AuthService', () => {
                     },
                 },
                 {
-                    provide: AuthRepository,
+                    provide: SessionService,
                     useValue: {
-                        saveSession: jest.fn(),
+                        createSession: jest.fn(),
+                        updateLastUsedAt: jest.fn(),
                     },
                 },
                 {
@@ -44,8 +46,10 @@ describe('AuthService', () => {
                     useClass: Repository,
                 },
                 {
-                    provide: getRepositoryToken(AuthSession),
-                    useClass: Repository,
+                    provide: getRepositoryToken(Session),
+                    useValue: {
+                        save: jest.fn(),
+                    },
                 },
             ],
         }).compile();
@@ -53,7 +57,10 @@ describe('AuthService', () => {
         service = module.get<AuthService>(AuthService);
         userService = module.get<UserService>(UserService);
         jwtService = module.get<JwtService>(JwtService);
-        authRepo = module.get<AuthRepository>(AuthRepository);
+        sessionService = module.get<SessionService>(SessionService);
+        sessionRepository = module.get<Repository<Session>>(
+            getRepositoryToken(Session),
+        );
     });
 
     it('should be defined', () => {
@@ -107,16 +114,24 @@ describe('AuthService', () => {
             user.email = 'test@example.com';
             user.role = Role.STUDENT;
 
+            const session = new Session();
+            session.id = 'some-uuid';
+
             jest.spyOn(service, 'validateUser').mockResolvedValue(user);
             (jwtService.sign as jest.Mock).mockReturnValue('test-token');
-            (authRepo.saveSession as jest.Mock).mockResolvedValue(
-                new AuthSession(),
+            (sessionService.createSession as jest.Mock).mockResolvedValue(
+                session,
             );
+            (sessionRepository.save as jest.Mock).mockResolvedValue(session);
 
-            const result = await service.login({
-                email: 'test@example.com',
-                password: 'password',
-            });
+            const result = await service.login(
+                {
+                    email: 'test@example.com',
+                    password: 'password',
+                },
+                '127.0.0.1',
+                'jest',
+            );
 
             expect(result).toEqual({
                 access_token: 'test-token',
@@ -132,10 +147,14 @@ describe('AuthService', () => {
             jest.spyOn(service, 'validateUser').mockResolvedValue(null);
 
             await expect(
-                service.login({
-                    email: 'test@example.com',
-                    password: 'wrongpassword',
-                }),
+                service.login(
+                    {
+                        email: 'test@example.com',
+                        password: 'wrongpassword',
+                    },
+                    '127.0.0.1',
+                    'jest',
+                ),
             ).rejects.toThrow(UnauthorizedException);
         });
     });
