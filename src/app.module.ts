@@ -12,6 +12,7 @@ import { SessionModule } from './session/session.module';
 import { EmailValidationModule } from './email-validation/email-validation.module';
 import { UserProfileModule } from './user-profile/user-profile.module';
 import { PasswordResetModule } from './password-reset/password-reset.module';
+import { LabAllocationModule } from './lab-allocation/lab-allocation.module';
 
 @Module({
     imports: [
@@ -52,6 +53,7 @@ import { PasswordResetModule } from './password-reset/password-reset.module';
         EmailValidationModule,
         UserProfileModule,
         PasswordResetModule,
+        LabAllocationModule,
     ],
     controllers: [AppController],
     providers: [AppService],
