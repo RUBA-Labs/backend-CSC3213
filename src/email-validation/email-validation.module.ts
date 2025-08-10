@@ -9,6 +9,6 @@ import { ConfigModule } from '@nestjs/config';
     imports: [TypeOrmModule.forFeature([EmailStatus]), ConfigModule],
     controllers: [EmailValidationController],
     providers: [EmailValidationService],
-    exports: [EmailValidationService] // Export if other modules need to use it
+    exports: [EmailValidationService], // Export if other modules need to use it
 })
 export class EmailValidationModule {}

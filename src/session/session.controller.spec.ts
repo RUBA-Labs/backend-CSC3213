@@ -43,7 +43,9 @@ describe('SessionController', () => {
 
     describe('getSessions', () => {
         it('should return sessions for the current user', async () => {
-            const req = { user: { userId: 1, role: Role.STUDENT } } as AuthenticatedRequest;
+            const req = {
+                user: { userId: 1, role: Role.STUDENT },
+            } as AuthenticatedRequest;
             await controller.getSessions(req);
             expect(service.findSessionsByUser).toHaveBeenCalledWith(1);
         });
@@ -58,7 +60,9 @@ describe('SessionController', () => {
 
     describe('logout', () => {
         it('should revoke a session', async () => {
-            const req = { user: { userId: 1, role: Role.STUDENT } } as AuthenticatedRequest;
+            const req = {
+                user: { userId: 1, role: Role.STUDENT },
+            } as AuthenticatedRequest;
             await controller.logout('some-uuid', req);
             expect(service.revokeSession).toHaveBeenCalledWith(
                 'some-uuid',
@@ -76,7 +80,9 @@ describe('SessionController', () => {
 
     describe('logoutAll', () => {
         it('should revoke all sessions for the current user', async () => {
-            const req = { user: { userId: 1, role: Role.STUDENT } } as AuthenticatedRequest;
+            const req = {
+                user: { userId: 1, role: Role.STUDENT },
+            } as AuthenticatedRequest;
             await controller.logoutAll(req);
             expect(service.revokeAllSessionsForUser).toHaveBeenCalledWith(1);
         });

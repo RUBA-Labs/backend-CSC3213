@@ -27,6 +27,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
             throw new UnauthorizedException();
         }
         await this.sessionService.updateLastUsedAt(session.id);
-        return { userId: payload.sub, role: payload.role };
+        return { userId: payload.sub, role: payload.role, jti: payload.jti };
     }
 }
