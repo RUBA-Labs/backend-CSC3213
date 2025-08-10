@@ -18,6 +18,7 @@ import {
     ApiOperation,
     ApiResponse,
     ApiBearerAuth,
+    ApiBody,
 } from '@nestjs/swagger';
 import { Roles } from '../auth/roles.decorator';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -71,6 +72,42 @@ export class UserController {
         description: 'The user has been successfully updated.',
     })
     @ApiResponse({ status: 404, description: 'User not found.' })
+    @ApiResponse({ status: 403, description: 'Forbidden.' })
+    @ApiBody({
+        type: UpdateUserDto,
+        examples: {
+            updateEmailAndFullName: {
+                summary: 'Update email and full name example',
+                value: {
+                    email: 'new.email@example.com',
+                    fullName: 'New Full Name',
+                },
+            },
+            updateDepartment: {
+                summary: 'Update department example',
+                value: {
+                    department: 'New Department Name',
+                },
+            },
+            updatePhone: {
+                summary: 'Update phone number example',
+                value: {
+                    phone: '987-654-3210',
+                },
+            },
+            updateAllFields: {
+                summary: 'Update all fields example',
+                value: {
+                    email: 'all.fields@example.com',
+                    password: 'newSecurePassword',
+                    role: 'academic',
+                    fullName: 'Updated All Fields User',
+                    department: 'Updated Department',
+                    phone: '111-222-3333',
+                },
+            },
+        },
+    })
     update(
         @Param('id', ParseIntPipe) id: number,
         @Body() updateUserDto: UpdateUserDto,
