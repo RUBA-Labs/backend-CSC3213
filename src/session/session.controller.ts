@@ -22,7 +22,7 @@ import { Roles } from '../auth/roles.decorator';
 import { Role } from '../user/role.enum';
 
 interface AuthenticatedRequest extends Request {
-    user: { userId: number; role: string };
+    user: { userId: number; role: string; jti: string };
 }
 
 @ApiTags('Session')
@@ -100,5 +100,25 @@ export class SessionController {
     })
     async logoutAllUsers() {
         return this.sessionService.revokeAllUserSessions();
+    }
+
+    @Delete('logout-from-this-device/logout')
+    @ApiOperation({ summary: 'Logout from this device (revoke session)' })
+    @ApiResponse({ status: 200, description: 'Session successfully revoked.' })
+    @ApiResponse({ status: 404, description: 'Session not found.' })
+    async logoutFromThisDevice(@Req() req: AuthenticatedRequest) {
+        const jti = req.user.jti;
+        return this.sessionService.revokeSessionByJti(jti);
+    }
+
+    @Delete('clean-revoked/clean')
+    @Roles(Role.DEVELOPER)
+    @ApiOperation({ summary: 'Clean revoked sessions (Developer only)' })
+    @ApiResponse({
+        status: 200,
+        description: 'Revoked sessions successfully cleaned.',
+    })
+    async cleanRevokedSessions() {
+        return this.sessionService.cleanRevokedSessions();
     }
 }

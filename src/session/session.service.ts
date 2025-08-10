@@ -97,4 +97,19 @@ export class SessionService {
             })
             .execute();
     }
+
+    async revokeSessionByJti(jti: string): Promise<void> {
+        const session = await this.sessionRepository.findOne({
+            where: { id: jti },
+        });
+        if (!session) {
+            throw new NotFoundException(`Session with ID ${jti} not found`);
+        }
+        session.isRevoked = true;
+        await this.sessionRepository.save(session);
+    }
+
+    async cleanRevokedSessions(): Promise<void> {
+        await this.sessionRepository.delete({ isRevoked: true });
+    }
 }
