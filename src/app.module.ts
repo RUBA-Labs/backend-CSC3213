@@ -10,6 +10,7 @@ import { AuthModule } from './auth/auth.module';
 import { EmailNotificationTestModule } from './email-notification-test/email-notification-test.module';
 import { SessionModule } from './session/session.module';
 import { EmailValidationModule } from './email-validation/email-validation.module';
+import { UserProfileModule } from './user-profile/user-profile.module';
 
 @Module({
     imports: [
@@ -48,6 +49,7 @@ import { EmailValidationModule } from './email-validation/email-validation.modul
         EmailNotificationTestModule,
         SessionModule,
         EmailValidationModule,
+        UserProfileModule,
     ],
     controllers: [AppController],
     providers: [AppService],
