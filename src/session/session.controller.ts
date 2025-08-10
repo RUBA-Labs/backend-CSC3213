@@ -88,4 +88,17 @@ export class SessionController {
         const userId = req.user.userId;
         return this.sessionService.revokeAllSessionsForUser(userId);
     }
+
+    @Delete('all-users/revoke-all')
+    @Roles(Role.DEVELOPER)
+    @ApiOperation({
+        summary: 'Logout from all devices for all users (Developer only)',
+    })
+    @ApiResponse({
+        status: 200,
+        description: 'All sessions for all users successfully revoked.',
+    })
+    async logoutAllUsers() {
+        return this.sessionService.revokeAllUserSessions();
+    }
 }

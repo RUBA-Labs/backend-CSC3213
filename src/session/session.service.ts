@@ -86,4 +86,15 @@ export class SessionService {
     async updateLastUsedAt(id: string): Promise<void> {
         await this.sessionRepository.update(id, { lastUsedAt: new Date() });
     }
+
+    async revokeAllUserSessions(): Promise<void> {
+        await this.sessionRepository
+            .createQueryBuilder()
+            .update(Session)
+            .set({ isRevoked: true })
+            .where('userId IN (SELECT id FROM "user" WHERE role != :role)', {
+                role: Role.DEVELOPER,
+            })
+            .execute();
+    }
 }

@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException, BadRequestException } from '@nestjs/common';
+import {
+    Injectable,
+    InternalServerErrorException,
+    BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { EmailStatus } from './entities/email-status.entity';
@@ -87,18 +91,26 @@ export class EmailValidationService {
         }
     }
 
-    async verifyOtp(email: string, otp: string, secret: string): Promise<{ message: string }> {
+    async verifyOtp(
+        email: string,
+        otp: string,
+        secret: string,
+    ): Promise<{ message: string }> {
         const storedOtpData = this.otpStore.get(email);
 
         if (!storedOtpData) {
-            throw new BadRequestException('OTP not found or expired. Please request a new one.');
+            throw new BadRequestException(
+                'OTP not found or expired. Please request a new one.',
+            );
         }
 
         // OTP expiration (e.g., 5 minutes)
         const OTP_EXPIRATION_TIME = 5 * 60 * 1000; // 5 minutes in milliseconds
         if (Date.now() - storedOtpData.timestamp > OTP_EXPIRATION_TIME) {
             this.otpStore.delete(email);
-            throw new BadRequestException('OTP expired. Please request a new one.');
+            throw new BadRequestException(
+                'OTP expired. Please request a new one.',
+            );
         }
 
         if (storedOtpData.otp === otp && storedOtpData.secret === secret) {
