@@ -11,6 +11,7 @@ import { EmailNotificationTestModule } from './email-notification-test/email-not
 import { SessionModule } from './session/session.module';
 import { EmailValidationModule } from './email-validation/email-validation.module';
 import { UserProfileModule } from './user-profile/user-profile.module';
+import { PasswordResetModule } from './password-reset/password-reset.module';
 
 @Module({
     imports: [
@@ -50,6 +51,7 @@ import { UserProfileModule } from './user-profile/user-profile.module';
         SessionModule,
         EmailValidationModule,
         UserProfileModule,
+        PasswordResetModule,
     ],
     controllers: [AppController],
     providers: [AppService],
