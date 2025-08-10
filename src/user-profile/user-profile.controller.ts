@@ -4,9 +4,11 @@ import {
     Body,
     UseGuards,
     Req,
+    Get,
 } from '@nestjs/common';
 import { UserProfileService } from './user-profile.service';
 import { UpdateUserProfileDto } from './dto/update-user-profile.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { AuthenticatedRequest } from '../auth/interfaces/authenticated-request.interface';
 import {
@@ -24,8 +26,29 @@ import {
 export class UserProfileController {
     constructor(private readonly userProfileService: UserProfileService) {}
 
+    @Get()
+    @ApiOperation({ summary: 'Get logged-in user\'s profile details' })
+    @ApiResponse({
+        status: 200,
+        description: 'User profile details successfully retrieved.',
+        schema: {
+            example: {
+                email: 'user@example.com',
+                fullName: 'John Doe',
+                department: 'Computer Science',
+                phone: '123-456-7890',
+            },
+        },
+    })
+    @ApiResponse({ status: 401, description: 'Unauthorized.' })
+    @ApiResponse({ status: 404, description: 'User not found.' })
+    async getUserProfile(@Req() req: AuthenticatedRequest) {
+        const userId = req.user.userId;
+        return this.userProfileService.getUserDetails(userId);
+    }
+
     @Patch()
-    @ApiOperation({ summary: "Update logged-in user's profile" })
+    @ApiOperation({ summary: 'Update logged-in user\'s profile' })
     @ApiResponse({
         status: 200,
         description: 'User profile successfully updated.',
@@ -69,6 +92,36 @@ export class UserProfileController {
     ) {
         const userId = req.user.userId;
         return this.userProfileService.updateProfile(userId, updateUserProfileDto);
+    }
+
+    @Patch('change-password')
+    @ApiOperation({ summary: 'Change logged-in user\'s password' })
+    @ApiResponse({
+        status: 200,
+        description: 'Password successfully changed.',
+    })
+    @ApiResponse({ status: 400, description: 'Invalid old password or new password.' })
+    @ApiResponse({ status: 401, description: 'Unauthorized.' })
+    @ApiResponse({ status: 404, description: 'User not found.' })
+    @ApiBody({
+        type: ChangePasswordDto,
+        examples: {
+            changePassword: {
+                summary: 'Change password example',
+                value: {
+                    oldPassword: 'currentPassword123',
+                    newPassword: 'newSecurePassword456',
+                },
+            },
+        },
+    })
+    async changePassword(
+        @Req() req: AuthenticatedRequest,
+        @Body() changePasswordDto: ChangePasswordDto,
+    ) {
+        const userId = req.user.userId;
+        await this.userProfileService.changePassword(userId, changePasswordDto);
+        return { message: 'Password successfully changed.' };
     }
 }
 
