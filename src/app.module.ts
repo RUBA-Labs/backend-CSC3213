@@ -18,6 +18,7 @@ import { ComputersModule } from './computers/computers.module';
 import { ComputersController } from './computers/computers.controller';
 import { LabSessionsModule } from './lab-sessions/lab-sessions.module';
 import { LabSessionsService } from './lab-sessions/lab-sessions.service';
+import { LabBookingModule } from './lab-booking/lab-booking.module';
 
 
 @Module({
@@ -62,6 +63,7 @@ import { LabSessionsService } from './lab-sessions/lab-sessions.service';
         ComputerLabsModule,
         ComputersModule,
         LabSessionsModule,
+        LabBookingModule,
     ],
     controllers: [AppController],
     providers: [AppService],
