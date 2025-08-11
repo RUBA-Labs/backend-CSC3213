@@ -13,6 +13,8 @@ import { EmailValidationModule } from './email-validation/email-validation.modul
 import { UserProfileModule } from './user-profile/user-profile.module';
 import { PasswordResetModule } from './password-reset/password-reset.module';
 import { LabAllocationModule } from './lab-allocation/lab-allocation.module';
+import { ComputerModule } from './computer/computer.module';
+import { LabBookingModule } from './lab-booking/lab-booking.module';
 
 @Module({
     imports: [
@@ -54,6 +56,8 @@ import { LabAllocationModule } from './lab-allocation/lab-allocation.module';
         UserProfileModule,
         PasswordResetModule,
         LabAllocationModule,
+        ComputerModule,
+        LabBookingModule,
     ],
     controllers: [AppController],
     providers: [AppService],
