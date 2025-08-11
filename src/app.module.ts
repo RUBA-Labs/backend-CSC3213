@@ -12,6 +12,12 @@ import { SessionModule } from './session/session.module';
 import { EmailValidationModule } from './email-validation/email-validation.module';
 import { UserProfileModule } from './user-profile/user-profile.module';
 import { PasswordResetModule } from './password-reset/password-reset.module';
+import { ComputerLabsModule } from './computer-labs/computer-labs.module';
+import { ComputerLabsController } from './computer-labs/computer-labs.controller';
+import { ComputersModule } from './computers/computers.module';
+import { ComputersController } from './computers/computers.controller';
+import { LabSessionsModule } from './lab-sessions/lab-sessions.module';
+import { LabSessionsService } from './lab-sessions/lab-sessions.service';
 
 
 @Module({
@@ -53,6 +59,9 @@ import { PasswordResetModule } from './password-reset/password-reset.module';
         EmailValidationModule,
         UserProfileModule,
         PasswordResetModule,
+        ComputerLabsModule,
+        ComputersModule,
+        LabSessionsModule,
     ],
     controllers: [AppController],
     providers: [AppService],
