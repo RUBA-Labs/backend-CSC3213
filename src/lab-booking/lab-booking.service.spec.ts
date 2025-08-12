@@ -6,7 +6,30 @@ describe('LabBookingService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [LabBookingService],
+      providers: [
+        LabBookingService,
+        {
+          provide: 'LabBookingRepository', // Use the string token for custom repositories
+          useValue: {
+            save: jest.fn(),
+            find: jest.fn(),
+            findOne: jest.fn(),
+            delete: jest.fn(),
+          },
+        },
+        {
+          provide: 'LabSessionRepository',
+          useValue: {
+            findOne: jest.fn(),
+          },
+        },
+        {
+          provide: 'ComputerRepository',
+          useValue: {
+            findOne: jest.fn(),
+          },
+        },
+      ],
     }).compile();
 
     service = module.get<LabBookingService>(LabBookingService);

@@ -20,10 +20,9 @@ import {
 import { Request } from 'express';
 import { Roles } from '../auth/roles.decorator';
 import { Role } from '../user/role.enum';
+import { AuthenticatedRequest } from '../auth/interfaces/authenticated-request.interface';
 
-interface AuthenticatedRequest extends Request {
-    user: { userId: number; role: string; jti: string };
-}
+
 
 @ApiTags('Session')
 @ApiBearerAuth()
