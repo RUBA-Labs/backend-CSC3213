@@ -13,7 +13,8 @@ export class ComputerLabsService {
     ) {}
 
     create(createComputerLabDto: CreateComputerLabDto): Promise<ComputerLab> {
-        const computerLab = this.computerLabRepository.create(createComputerLabDto);
+        const computerLab =
+            this.computerLabRepository.create(createComputerLabDto);
         return this.computerLabRepository.save(computerLab);
     }
 
@@ -22,20 +23,29 @@ export class ComputerLabsService {
     }
 
     async findOne(labId: string): Promise<ComputerLab> {
-        const computerLab = await this.computerLabRepository.findOne({ where: { labId } });
+        const computerLab = await this.computerLabRepository.findOne({
+            where: { labId },
+        });
         if (!computerLab) {
-            throw new NotFoundException(`Computer Lab with ID "${labId}" not found`);
+            throw new NotFoundException(
+                `Computer Lab with ID "${labId}" not found`,
+            );
         }
         return computerLab;
     }
 
-    async update(labId: string, updateComputerLabDto: UpdateComputerLabDto): Promise<ComputerLab> {
+    async update(
+        labId: string,
+        updateComputerLabDto: UpdateComputerLabDto,
+    ): Promise<ComputerLab> {
         const computerLab = await this.computerLabRepository.preload({
             labId: labId,
             ...updateComputerLabDto,
         });
         if (!computerLab) {
-            throw new NotFoundException(`Computer Lab with ID "${labId}" not found`);
+            throw new NotFoundException(
+                `Computer Lab with ID "${labId}" not found`,
+            );
         }
         return this.computerLabRepository.save(computerLab);
     }
@@ -43,7 +53,9 @@ export class ComputerLabsService {
     async remove(labId: string): Promise<void> {
         const result = await this.computerLabRepository.delete(labId);
         if (result.affected === 0) {
-            throw new NotFoundException(`Computer Lab with ID "${labId}" not found`);
+            throw new NotFoundException(
+                `Computer Lab with ID "${labId}" not found`,
+            );
         }
     }
 }

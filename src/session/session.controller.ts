@@ -22,14 +22,20 @@ import { Roles } from '../auth/roles.decorator';
 import { Role } from '../user/role.enum';
 import { AuthenticatedRequest } from '../auth/interfaces/authenticated-request.interface';
 
-
-
 @ApiTags('Session')
 @ApiBearerAuth()
 @Controller('session')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class SessionController {
     constructor(private readonly sessionService: SessionService) {}
+
+    @Get('is-valid')
+    @ApiOperation({ summary: 'Check if the current session is valid' })
+    @ApiResponse({ status: 200, description: 'Session is valid.' })
+    @ApiResponse({ status: 401, description: 'Session is invalid.' })
+    isValidSession() {
+        return { isValid: true };
+    }
 
     @Get()
     @ApiOperation({ summary: 'Get all active sessions for the current user' })

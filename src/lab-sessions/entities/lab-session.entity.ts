@@ -1,4 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import {
+    Entity,
+    PrimaryGeneratedColumn,
+    Column,
+    ManyToOne,
+    JoinColumn,
+} from 'typeorm';
 import { ComputerLab } from '../../computer-labs/entities/computer-lab.entity';
 
 @Entity('lab_sessions')

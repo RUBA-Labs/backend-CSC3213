@@ -1,11 +1,4 @@
-import {
-    Controller,
-    Patch,
-    Body,
-    UseGuards,
-    Req,
-    Get,
-} from '@nestjs/common';
+import { Controller, Patch, Body, UseGuards, Req, Get } from '@nestjs/common';
 import { UserProfileService } from './user-profile.service';
 import { UpdateUserProfileDto } from './dto/update-user-profile.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
@@ -27,7 +20,7 @@ export class UserProfileController {
     constructor(private readonly userProfileService: UserProfileService) {}
 
     @Get()
-    @ApiOperation({ summary: 'Get logged-in user\'s profile details' })
+    @ApiOperation({ summary: "Get logged-in user's profile details" })
     @ApiResponse({
         status: 200,
         description: 'User profile details successfully retrieved.',
@@ -48,7 +41,7 @@ export class UserProfileController {
     }
 
     @Patch()
-    @ApiOperation({ summary: 'Update logged-in user\'s profile' })
+    @ApiOperation({ summary: "Update logged-in user's profile" })
     @ApiResponse({
         status: 200,
         description: 'User profile successfully updated.',
@@ -91,16 +84,22 @@ export class UserProfileController {
         @Body() updateUserProfileDto: UpdateUserProfileDto,
     ) {
         const userId = req.user.userId;
-        return this.userProfileService.updateProfile(userId, updateUserProfileDto);
+        return this.userProfileService.updateProfile(
+            userId,
+            updateUserProfileDto,
+        );
     }
 
     @Patch('change-password')
-    @ApiOperation({ summary: 'Change logged-in user\'s password' })
+    @ApiOperation({ summary: "Change logged-in user's password" })
     @ApiResponse({
         status: 200,
         description: 'Password successfully changed.',
     })
-    @ApiResponse({ status: 400, description: 'Invalid old password or new password.' })
+    @ApiResponse({
+        status: 400,
+        description: 'Invalid old password or new password.',
+    })
     @ApiResponse({ status: 401, description: 'Unauthorized.' })
     @ApiResponse({ status: 404, description: 'User not found.' })
     @ApiBody({
@@ -124,4 +123,3 @@ export class UserProfileController {
         return { message: 'Password successfully changed.' };
     }
 }
-

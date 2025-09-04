@@ -1,4 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import {
+    Entity,
+    PrimaryGeneratedColumn,
+    Column,
+    ManyToOne,
+    JoinColumn,
+} from 'typeorm';
 import { ComputerLab } from '../../computer-labs/entities/computer-lab.entity';
 
 export enum ComputerStatus {
@@ -18,7 +24,11 @@ export class Computer {
     @JoinColumn({ name: 'labId' }) // Specify the foreign key column
     computerLab: ComputerLab;
 
-    @Column({ type: 'enum', enum: ComputerStatus, default: ComputerStatus.ENABLED })
+    @Column({
+        type: 'enum',
+        enum: ComputerStatus,
+        default: ComputerStatus.ENABLED,
+    })
     status: ComputerStatus;
 
     @Column({ type: 'varchar', length: 255, nullable: true })
