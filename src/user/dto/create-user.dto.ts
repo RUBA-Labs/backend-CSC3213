@@ -25,12 +25,12 @@ export class CreateUserDto {
     password: string;
 
     @ApiProperty({
-        description: 'The role of the user',
-        enum: Role,
-        example: Role.STUDENT,
+        description: 'An optional secret to gain developer privileges',
+        example: 'a-very-secret-string',
+        required: false,
     })
-    @IsEnum(Role)
-    role: Role;
+    @IsOptional()
+    developerSecret?: string;
 
     @ApiProperty({
         description: 'The full name of the user',
