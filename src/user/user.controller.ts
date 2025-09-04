@@ -95,6 +95,12 @@ export class UserController {
                     phone: '987-654-3210',
                 },
             },
+            updateRole: {
+                summary: 'Update user role example',
+                value: {
+                    role: 'admin',
+                },
+            },
             updateAllFields: {
                 summary: 'Update all fields example',
                 value: {

@@ -42,10 +42,7 @@ export class UserService {
         }
 
         const { developerSecret, ...userData } = createUserDto;
-        const role = this.determineRole(
-            userData.email,
-            developerSecret,
-        );
+        const role = this.determineRole(userData.email, developerSecret);
 
         const hash = await bcrypt.hash(userData.password, 10);
         const user = this.userRepository.create({
@@ -58,7 +55,9 @@ export class UserService {
     }
 
     private determineRole(email: string, developerSecret?: string): Role {
-        const devSecret = this.configService.get<string>('DEVELOPER_SECRET')?.trim();
+        const devSecret = this.configService
+            .get<string>('DEVELOPER_SECRET')
+            ?.trim();
         if (devSecret && developerSecret === devSecret) {
             return Role.DEVELOPER;
         }
@@ -70,8 +69,9 @@ export class UserService {
             return Role.FIRST_YEAR_STUDENT;
         }
 
-        const studentPrefix =
-            this.configService.get<string>('STUDENT_EMAIL_PREFIX');
+        const studentPrefix = this.configService.get<string>(
+            'STUDENT_EMAIL_PREFIX',
+        );
         if (studentPrefix && email.startsWith(studentPrefix)) {
             return Role.STUDENT;
         }
