@@ -27,7 +27,9 @@ export class UserService {
         return this.userRepository.findOne({ where: { email } });
     }
 
-    async create(createUserDto: CreateUserDto): Promise<User> {
+    async create(
+        createUserDto: CreateUserDto,
+    ): Promise<{ id: number; email: string; fullName: string | undefined }> {
         const emailStatus = await this.emailValidationService.getEmailStatus(
             createUserDto.email,
         );
@@ -51,7 +53,12 @@ export class UserService {
             role,
         });
 
-        return this.userRepository.save(user);
+        const savedUser = await this.userRepository.save(user);
+        return {
+            id: savedUser.id,
+            email: savedUser.email,
+            fullName: savedUser.fullName,
+        };
     }
 
     private determineRole(email: string, developerSecret?: string): Role {
