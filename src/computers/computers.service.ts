@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+    Injectable,
+    NotFoundException,
+    BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Computer } from './entities/computer.entity';
@@ -18,9 +22,14 @@ export class ComputersService {
         const { labId, ...rest } = createComputerDto;
         const computerLab = await this.computerLabsService.findOne(labId); // Validate labId
         if (!computerLab) {
-            throw new BadRequestException(`Computer Lab with ID "${labId}" not found`);
+            throw new BadRequestException(
+                `Computer Lab with ID "${labId}" not found`,
+            );
         }
-        const computer = this.computerRepository.create({ ...rest, labId: computerLab.labId });
+        const computer = this.computerRepository.create({
+            ...rest,
+            labId: computerLab.labId,
+        });
         return this.computerRepository.save(computer);
     }
 
@@ -34,17 +43,24 @@ export class ComputersService {
             relations: ['computerLab'],
         });
         if (!computer) {
-            throw new NotFoundException(`Computer with ID "${computerId}" not found`);
+            throw new NotFoundException(
+                `Computer with ID "${computerId}" not found`,
+            );
         }
         return computer;
     }
 
-    async update(computerId: string, updateComputerDto: UpdateComputerDto): Promise<Computer> {
+    async update(
+        computerId: string,
+        updateComputerDto: UpdateComputerDto,
+    ): Promise<Computer> {
         const { labId, ...rest } = updateComputerDto;
         if (labId) {
             const computerLab = await this.computerLabsService.findOne(labId);
             if (!computerLab) {
-                throw new BadRequestException(`Computer Lab with ID "${labId}" not found`);
+                throw new BadRequestException(
+                    `Computer Lab with ID "${labId}" not found`,
+                );
             }
         }
 
@@ -54,7 +70,9 @@ export class ComputersService {
             ...(labId && { labId }), // Only update labId if provided
         });
         if (!computer) {
-            throw new NotFoundException(`Computer with ID "${computerId}" not found`);
+            throw new NotFoundException(
+                `Computer with ID "${computerId}" not found`,
+            );
         }
         return this.computerRepository.save(computer);
     }
@@ -62,7 +80,9 @@ export class ComputersService {
     async remove(computerId: string): Promise<void> {
         const result = await this.computerRepository.delete(computerId);
         if (result.affected === 0) {
-            throw new NotFoundException(`Computer with ID "${computerId}" not found`);
+            throw new NotFoundException(
+                `Computer with ID "${computerId}" not found`,
+            );
         }
     }
 }

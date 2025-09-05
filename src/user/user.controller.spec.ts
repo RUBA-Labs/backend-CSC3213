@@ -51,24 +51,20 @@ describe('UserController', () => {
             const createUserDto: CreateUserDto = {
                 email: 'test@example.com',
                 password: 'password',
-                role: Role.STUDENT,
+                fullName: 'Test User',
             };
 
             mockUserService.create.mockResolvedValue({
                 id: 1,
-                ...createUserDto,
-                createdAt: new Date(),
-                updatedAt: new Date(),
+                email: 'test@example.com',
+                fullName: 'Test User',
             });
 
-            expect(await controller.create(createUserDto)).toEqual(
-                expect.objectContaining({
-                    ...createUserDto,
-                    id: expect.any(Number),
-                    createdAt: expect.any(Date),
-                    updatedAt: expect.any(Date),
-                }),
-            );
+            expect(await controller.create(createUserDto)).toEqual({
+                id: expect.any(Number),
+                email: 'test@example.com',
+                fullName: 'Test User',
+            });
             expect(service.create).toHaveBeenCalledWith(createUserDto);
         });
     });

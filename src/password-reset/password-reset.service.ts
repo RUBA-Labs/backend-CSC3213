@@ -1,4 +1,8 @@
-import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import {
+    Injectable,
+    BadRequestException,
+    NotFoundException,
+} from '@nestjs/common';
 import { EmailValidationService } from '../email-validation/email-validation.service';
 import { UserService } from '../user/user.service';
 import { RequestPasswordResetDto } from './dto/request-password-reset.dto';
@@ -11,11 +15,14 @@ export class PasswordResetService {
         private readonly userService: UserService,
     ) {}
 
-    async requestPasswordReset(requestPasswordResetDto: RequestPasswordResetDto): Promise<{ secret: string }> {
+    async requestPasswordReset(
+        requestPasswordResetDto: RequestPasswordResetDto,
+    ): Promise<{ secret: string }> {
         const { email } = requestPasswordResetDto;
 
         // 1. Check if email exists and is validated in email_status table
-        const emailStatus = await this.emailValidationService.getEmailStatus(email);
+        const emailStatus =
+            await this.emailValidationService.getEmailStatus(email);
         if (!emailStatus || !emailStatus.isValidated) {
             throw new BadRequestException('Email not found or not validated.');
         }
@@ -31,12 +38,17 @@ export class PasswordResetService {
         return { secret };
     }
 
-    async resetPassword(resetPasswordDto: ResetPasswordDto): Promise<{ message: string }> {
+    async resetPassword(
+        resetPasswordDto: ResetPasswordDto,
+    ): Promise<{ message: string }> {
         const { email, otp, secret, newPassword } = resetPasswordDto;
 
         // 1. Verify OTP
-        const otpVerificationResult = await this.emailValidationService.verifyOtp(email, otp, secret);
-        if (otpVerificationResult.message !== 'Email is validated successfully.') {
+        const otpVerificationResult =
+            await this.emailValidationService.verifyOtp(email, otp, secret);
+        if (
+            otpVerificationResult.message !== 'Email is validated successfully.'
+        ) {
             throw new BadRequestException(otpVerificationResult.message);
         }
 
@@ -53,4 +65,3 @@ export class PasswordResetService {
         return { message: 'Password reset successfully.' };
     }
 }
-

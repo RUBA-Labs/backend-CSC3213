@@ -20,10 +20,7 @@ import {
 import { Request } from 'express';
 import { Roles } from '../auth/roles.decorator';
 import { Role } from '../user/role.enum';
-
-interface AuthenticatedRequest extends Request {
-    user: { userId: number; role: string; jti: string };
-}
+import { AuthenticatedRequest } from '../auth/interfaces/authenticated-request.interface';
 
 @ApiTags('Session')
 @ApiBearerAuth()
@@ -31,6 +28,14 @@ interface AuthenticatedRequest extends Request {
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class SessionController {
     constructor(private readonly sessionService: SessionService) {}
+
+    @Get('is-valid')
+    @ApiOperation({ summary: 'Check if the current session is valid' })
+    @ApiResponse({ status: 200, description: 'Session is valid.' })
+    @ApiResponse({ status: 401, description: 'Session is invalid.' })
+    isValidSession() {
+        return { isValid: true };
+    }
 
     @Get()
     @ApiOperation({ summary: 'Get all active sessions for the current user' })

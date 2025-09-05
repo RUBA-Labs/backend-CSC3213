@@ -42,7 +42,8 @@ export class CreateLabSessionDto {
     lecturer: string;
 
     @ApiProperty({
-        description: 'The ID of the computer lab where the session will be held.',
+        description:
+            'The ID of the computer lab where the session will be held.',
         example: 'a1b2c3d4-e5f6-7890-1234-567890abcdef',
     })
     @IsUUID()

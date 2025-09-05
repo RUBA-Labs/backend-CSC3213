@@ -5,9 +5,9 @@ import { ComputerLabsController } from './computer-labs.controller';
 import { ComputerLabsService } from './computer-labs.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ComputerLab])],
-  controllers: [ComputerLabsController],
-  providers: [ComputerLabsService],
-  exports: [ComputerLabsService],
+    imports: [TypeOrmModule.forFeature([ComputerLab])],
+    controllers: [ComputerLabsController],
+    providers: [ComputerLabsService],
+    exports: [ComputerLabsService],
 })
 export class ComputerLabsModule {}

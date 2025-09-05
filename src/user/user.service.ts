@@ -11,19 +11,25 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import * as bcrypt from 'bcrypt';
 import { EmailValidationService } from '../email-validation/email-validation.service';
+import { ConfigService } from '@nestjs/config';
+import { Role } from './role.enum';
 
 @Injectable()
 export class UserService {
-    async findByEmail(email: string): Promise<User | null> {
-        return this.userRepository.findOne({ where: { email } });
-    }
     constructor(
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
         private readonly emailValidationService: EmailValidationService,
+        private readonly configService: ConfigService,
     ) {}
 
-    async create(createUserDto: CreateUserDto): Promise<User> {
+    async findByEmail(email: string): Promise<User | null> {
+        return this.userRepository.findOne({ where: { email } });
+    }
+
+    async create(
+        createUserDto: CreateUserDto,
+    ): Promise<{ id: number; email: string; fullName: string | undefined }> {
         const emailStatus = await this.emailValidationService.getEmailStatus(
             createUserDto.email,
         );
@@ -36,12 +42,48 @@ export class UserService {
         if (existingUser) {
             throw new ConflictException('User with this email already exists');
         }
-        const hash = await bcrypt.hash(createUserDto.password, 10);
+
+        const { developerSecret, ...userData } = createUserDto;
+        const role = this.determineRole(userData.email, developerSecret);
+
+        const hash = await bcrypt.hash(userData.password, 10);
         const user = this.userRepository.create({
-            ...createUserDto,
+            ...userData,
             password: hash,
+            role,
         });
-        return this.userRepository.save(user);
+
+        const savedUser = await this.userRepository.save(user);
+        return {
+            id: savedUser.id,
+            email: savedUser.email,
+            fullName: savedUser.fullName,
+        };
+    }
+
+    private determineRole(email: string, developerSecret?: string): Role {
+        const devSecret = this.configService
+            .get<string>('DEVELOPER_SECRET')
+            ?.trim();
+        if (devSecret && developerSecret === devSecret) {
+            return Role.DEVELOPER;
+        }
+
+        const firstYearPrefix = this.configService.get<string>(
+            'FIRST_YEAR_STUDENT_EMAIL_PREFIX',
+        );
+        if (firstYearPrefix && email.startsWith(firstYearPrefix)) {
+            return Role.FIRST_YEAR_STUDENT;
+        }
+
+        const studentPrefix = this.configService.get<string>(
+            'STUDENT_EMAIL_PREFIX',
+        );
+        if (studentPrefix && email.startsWith(studentPrefix)) {
+            return Role.STUDENT;
+        }
+
+        return Role.USER;
     }
 
     async findAll(): Promise<User[]> {

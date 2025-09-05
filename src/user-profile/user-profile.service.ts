@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+    Injectable,
+    NotFoundException,
+    BadRequestException,
+} from '@nestjs/common';
 import { UpdateUserProfileDto } from './dto/update-user-profile.dto';
 import { UserService } from '../user/user.service';
 import * as bcrypt from 'bcrypt';
@@ -8,7 +12,10 @@ import { ChangePasswordDto } from './dto/change-password.dto';
 export class UserProfileService {
     constructor(private readonly userService: UserService) {}
 
-    async updateProfile(userId: number, updateUserProfileDto: UpdateUserProfileDto) {
+    async updateProfile(
+        userId: number,
+        updateUserProfileDto: UpdateUserProfileDto,
+    ) {
         const user = await this.userService.findOne(userId);
         if (!user) {
             throw new NotFoundException(`User with ID ${userId} not found`);
@@ -28,22 +35,33 @@ export class UserProfileService {
         return this.userService.update(userId, user);
     }
 
-    async changePassword(userId: number, changePasswordDto: ChangePasswordDto): Promise<void> {
+    async changePassword(
+        userId: number,
+        changePasswordDto: ChangePasswordDto,
+    ): Promise<void> {
         const user = await this.userService.findOne(userId);
         if (!user) {
             throw new NotFoundException(`User with ID ${userId} not found`);
         }
 
-        const isPasswordValid = await bcrypt.compare(changePasswordDto.oldPassword, user.password);
+        const isPasswordValid = await bcrypt.compare(
+            changePasswordDto.oldPassword,
+            user.password,
+        );
         if (!isPasswordValid) {
             throw new BadRequestException('Invalid old password');
         }
 
-        const hashedNewPassword = await bcrypt.hash(changePasswordDto.newPassword, 10);
+        const hashedNewPassword = await bcrypt.hash(
+            changePasswordDto.newPassword,
+            10,
+        );
         // user.password = hashedNewPassword; // Remove this line
 
         // Pass the plain new password to userService.update, which will handle hashing
-        await this.userService.update(userId, { password: changePasswordDto.newPassword });
+        await this.userService.update(userId, {
+            password: changePasswordDto.newPassword,
+        });
 
         // Re-fetch the user to ensure we have the latest data from the database
         const updatedUser = await this.userService.findOne(userId);

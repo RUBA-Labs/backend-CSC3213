@@ -20,7 +20,6 @@ import { LabSessionsModule } from './lab-sessions/lab-sessions.module';
 import { LabSessionsService } from './lab-sessions/lab-sessions.service';
 import { LabBookingModule } from './lab-booking/lab-booking.module';
 
-
 @Module({
     imports: [
         ConfigModule.forRoot({

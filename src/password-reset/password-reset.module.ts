@@ -5,8 +5,8 @@ import { EmailValidationModule } from '../email-validation/email-validation.modu
 import { UserModule } from '../user/user.module';
 
 @Module({
-  imports: [EmailValidationModule, UserModule],
-  controllers: [PasswordResetController],
-  providers: [PasswordResetService],
+    imports: [EmailValidationModule, UserModule],
+    controllers: [PasswordResetController],
+    providers: [PasswordResetService],
 })
 export class PasswordResetModule {}

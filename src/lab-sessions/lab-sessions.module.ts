@@ -6,11 +6,11 @@ import { LabSessionsService } from './lab-sessions.service';
 import { ComputerLabsModule } from '../computer-labs/computer-labs.module'; // Import ComputerLabsModule
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([LabSession]),
-    ComputerLabsModule, // Import ComputerLabsModule
-  ],
-  controllers: [LabSessionsController],
-  providers: [LabSessionsService],
+    imports: [
+        TypeOrmModule.forFeature([LabSession]),
+        ComputerLabsModule, // Import ComputerLabsModule
+    ],
+    controllers: [LabSessionsController],
+    providers: [LabSessionsService],
 })
 export class LabSessionsModule {}
