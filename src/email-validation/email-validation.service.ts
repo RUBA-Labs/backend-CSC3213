@@ -57,6 +57,13 @@ export class EmailValidationService {
             throw new BadRequestException('Invalid email format.');
         }
 
+        const existingEmail = await this.emailStatusRepository.findOneBy({
+            email,
+        });
+        if (existingEmail) {
+            throw new BadRequestException('Email already exists.');
+        }
+
         const otp = crypto.randomInt(100000, 999999).toString(); // 6-digit OTP
         const secret = crypto.randomBytes(16).toString('hex'); // 16-byte hex secret
 

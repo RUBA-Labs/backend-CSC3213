@@ -1,4 +1,11 @@
-import { Controller, Post, Body, Res, HttpStatus } from '@nestjs/common';
+import {
+    Controller,
+    Post,
+    Body,
+    Res,
+    HttpStatus,
+    BadRequestException,
+} from '@nestjs/common';
 import { EmailValidationService } from './email-validation.service';
 import { ValidateEmailDto } from './dto/validate-email.dto';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
@@ -26,7 +33,7 @@ export class EmailValidationController {
     })
     @ApiResponse({
         status: 400,
-        description: 'Invalid email format or other error.',
+        description: 'Invalid email format or email already exists.',
     })
     @ApiBody({
         type: ValidateEmailDto,
@@ -36,11 +43,20 @@ export class EmailValidationController {
         @Body() validateEmailDto: ValidateEmailDto,
         @Res() res: Response,
     ) {
-        const { email } = validateEmailDto;
-        const { secret } = await this.emailValidationService.sendOtp(email);
-        return res
-            .status(HttpStatus.OK)
-            .json({ message: 'OTP sent successfully.', secret });
+        try {
+            const { email } = validateEmailDto;
+            const { secret } = await this.emailValidationService.sendOtp(email);
+            return res
+                .status(HttpStatus.OK)
+                .json({ message: 'OTP sent successfully.', secret });
+        } catch (error) {
+            if (error instanceof BadRequestException) {
+                return res
+                    .status(HttpStatus.BAD_REQUEST)
+                    .json({ message: error.message });
+            }
+            throw error;
+        }
     }
 
     @Post('verify-otp')
