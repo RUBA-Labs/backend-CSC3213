@@ -8,6 +8,7 @@ import { Repository } from 'typeorm';
 import { LabBooking } from './entities/lab-booking.entity';
 import { LabSession } from '../lab-sessions/entities/lab-session.entity';
 import { Computer } from '../computers/entities/computer.entity';
+import { LabSessionBookingStatus } from './interfaces/lab-session-booking-status.interface';
 
 @Injectable()
 export class LabBookingService {
@@ -20,7 +21,9 @@ export class LabBookingService {
         private computerRepository: Repository<Computer>,
     ) {}
 
-    async getLabSessionBookingStatus(labSessionId: string): Promise<any> {
+    async getLabSessionBookingStatus(
+        labSessionId: string,
+    ): Promise<LabSessionBookingStatus> {
         const labSession = await this.labSessionRepository.findOne({
             where: { sessionId: labSessionId },
         });

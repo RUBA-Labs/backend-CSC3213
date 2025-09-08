@@ -8,7 +8,6 @@ import { AuthenticatedRequest } from '../auth/interfaces/authenticated-request.i
 
 describe('SessionController', () => {
     let controller: SessionController;
-    let service: SessionService;
 
     const mockSessionService = {
         findSessionsByUser: jest.fn().mockResolvedValue([]),
@@ -18,6 +17,11 @@ describe('SessionController', () => {
     };
 
     beforeEach(async () => {
+        mockSessionService.findSessionsByUser.mockClear();
+        mockSessionService.findAllSessions.mockClear();
+        mockSessionService.revokeSession.mockClear();
+        mockSessionService.revokeAllSessionsForUser.mockClear();
+
         const module: TestingModule = await Test.createTestingModule({
             controllers: [SessionController],
             providers: [
@@ -34,7 +38,6 @@ describe('SessionController', () => {
             .compile();
 
         controller = module.get<SessionController>(SessionController);
-        service = module.get<SessionService>(SessionService);
     });
 
     it('should be defined', () => {
@@ -53,14 +56,16 @@ describe('SessionController', () => {
                 body: {},
             } as any as AuthenticatedRequest;
             await controller.getSessions(req);
-            expect(service.findSessionsByUser).toHaveBeenCalledWith(1);
+            expect(mockSessionService.findSessionsByUser).toHaveBeenCalledWith(
+                1,
+            );
         });
     });
 
     describe('getAllSessions', () => {
         it('should return all sessions for a developer', async () => {
             await controller.getAllSessions();
-            expect(service.findAllSessions).toHaveBeenCalled();
+            expect(mockSessionService.findAllSessions).toHaveBeenCalled();
         });
     });
 
@@ -76,7 +81,7 @@ describe('SessionController', () => {
                 body: {},
             } as any as AuthenticatedRequest;
             await controller.logout('some-uuid', req);
-            expect(service.revokeSession).toHaveBeenCalledWith(
+            expect(mockSessionService.revokeSession).toHaveBeenCalledWith(
                 'some-uuid',
                 req.user,
             );
@@ -86,7 +91,9 @@ describe('SessionController', () => {
     describe('logoutAllUserSessions', () => {
         it('should revoke all sessions for a specific user', async () => {
             await controller.logoutAllUserSessions(1);
-            expect(service.revokeAllSessionsForUser).toHaveBeenCalledWith(1);
+            expect(
+                mockSessionService.revokeAllSessionsForUser,
+            ).toHaveBeenCalledWith(1);
         });
     });
 
@@ -102,7 +109,9 @@ describe('SessionController', () => {
                 body: {},
             } as any as AuthenticatedRequest;
             await controller.logoutAll(req);
-            expect(service.revokeAllSessionsForUser).toHaveBeenCalledWith(1);
+            expect(
+                mockSessionService.revokeAllSessionsForUser,
+            ).toHaveBeenCalledWith(1);
         });
     });
 });

@@ -52,24 +52,10 @@ export class UserProfileService {
             throw new BadRequestException('Invalid old password');
         }
 
-        const hashedNewPassword = await bcrypt.hash(
-            changePasswordDto.newPassword,
-            10,
-        );
-        // user.password = hashedNewPassword; // Remove this line
-
         // Pass the plain new password to userService.update, which will handle hashing
         await this.userService.update(userId, {
             password: changePasswordDto.newPassword,
         });
-
-        // Re-fetch the user to ensure we have the latest data from the database
-        const updatedUser = await this.userService.findOne(userId);
-
-        // console.log('New plain password:', changePasswordDto.newPassword);
-        // console.log('New hashed password after storage:', updatedUser.password);
-        // const isNewPasswordMatch = await bcrypt.compare(changePasswordDto.newPassword, updatedUser.password);
-        // console.log('New password matches stored hash:', isNewPasswordMatch);
     }
 
     async getUserDetails(userId: number): Promise<{

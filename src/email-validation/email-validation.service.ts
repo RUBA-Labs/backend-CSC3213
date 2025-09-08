@@ -46,14 +46,14 @@ export class EmailValidationService {
     }
 
     // For development, always return true
-    validateEmailFormat(email: string): boolean {
+    validateEmailFormat(): boolean {
         // In a real scenario, you would implement robust email and domain validation here.
         // For now, as per requirements, it always returns true for development.
         return true;
     }
 
     async sendOtp(email: string): Promise<{ secret: string }> {
-        if (!this.validateEmailFormat(email)) {
+        if (!this.validateEmailFormat()) {
             throw new BadRequestException('Invalid email format.');
         }
 
