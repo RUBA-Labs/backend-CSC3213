@@ -1,4 +1,13 @@
-import { Controller, Post, Body, Get, UseGuards, Req } from '@nestjs/common';
+import {
+    Controller,
+    Post,
+    Body,
+    Get,
+    UseGuards,
+    Req,
+    Param,
+    HttpCode,
+} from '@nestjs/common';
 import { NotificationService } from './notification.service';
 import { CreateNotificationDto } from './dto/create-notification.dto';
 import {
@@ -37,10 +46,7 @@ export class NotificationController {
         description: 'The notification has been successfully created.',
         schema: {
             type: 'object',
-            properties: {
-                id: { type: 'string' },
-                message: { type: 'string' },
-            },
+            properties: { id: { type: 'string' }, message: { type: 'string' } },
             example: {
                 id: 'd9b9185c-efab-407e-8c96-473c66247f51',
                 message: 'Notification created successfully',
@@ -70,5 +76,33 @@ export class NotificationController {
         @Req() req: AuthenticatedRequest,
     ): Promise<NotificationDto[]> {
         return this.notificationService.findAllByUser(req.user.userId);
+    }
+
+    @Post('/:id/read')
+    @UseGuards(JwtAuthGuard)
+    @ApiBearerAuth()
+    @ApiOperation({ summary: 'Mark a notification as read' })
+    @ApiResponse({ status: 204, description: 'Notification marked as read' })
+    @ApiResponse({ status: 404, description: 'Notification not found' })
+    @HttpCode(204)
+    async markAsRead(
+        @Param('id') id: string,
+        @Req() req: AuthenticatedRequest,
+    ): Promise<void> {
+        return this.notificationService.markAsRead(id, req.user.userId);
+    }
+
+    @Post('/:id/unread')
+    @UseGuards(JwtAuthGuard)
+    @ApiBearerAuth()
+    @ApiOperation({ summary: 'Mark a notification as unread' })
+    @ApiResponse({ status: 204, description: 'Notification marked as unread' })
+    @ApiResponse({ status: 404, description: 'Notification not found' })
+    @HttpCode(204)
+    async markAsUnread(
+        @Param('id') id: string,
+        @Req() req: AuthenticatedRequest,
+    ): Promise<void> {
+        return this.notificationService.markAsUnread(id, req.user.userId);
     }
 }

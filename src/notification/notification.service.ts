@@ -45,6 +45,33 @@ export class NotificationService {
             where: { user: { id: userId } },
             select: ['id', 'message', 'createdAt', 'isRead'],
             order: { createdAt: 'DESC' },
+            take: 20,
         });
+    }
+
+    async markAsRead(notificationId: string, userId: number): Promise<void> {
+        const notification = await this.notificationRepository.findOne({
+            where: { id: notificationId, user: { id: userId } },
+        });
+
+        if (!notification) {
+            throw new NotFoundException('Notification not found');
+        }
+
+        notification.isRead = true;
+        await this.notificationRepository.save(notification);
+    }
+
+    async markAsUnread(notificationId: string, userId: number): Promise<void> {
+        const notification = await this.notificationRepository.findOne({
+            where: { id: notificationId, user: { id: userId } },
+        });
+
+        if (!notification) {
+            throw new NotFoundException('Notification not found');
+        }
+
+        notification.isRead = false;
+        await this.notificationRepository.save(notification);
     }
 }
