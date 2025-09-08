@@ -74,4 +74,19 @@ export class NotificationService {
         notification.isRead = false;
         await this.notificationRepository.save(notification);
     }
+
+    async findOneByIdAndUser(
+        notificationId: string,
+        userId: number,
+    ): Promise<Notification> {
+        const notification = await this.notificationRepository.findOne({
+            where: { id: notificationId, user: { id: userId } },
+        });
+
+        if (!notification) {
+            throw new NotFoundException('Notification not found');
+        }
+
+        return notification;
+    }
 }

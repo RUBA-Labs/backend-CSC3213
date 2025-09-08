@@ -20,6 +20,7 @@ import {
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { AuthenticatedRequest } from '../auth/interfaces/authenticated-request.interface';
 import { NotificationDto } from './dto/notification.dto';
+import { Notification } from './entities/notification.entity';
 
 @ApiTags('Notification')
 @Controller('notification')
@@ -104,5 +105,22 @@ export class NotificationController {
         @Req() req: AuthenticatedRequest,
     ): Promise<void> {
         return this.notificationService.markAsUnread(id, req.user.userId);
+    }
+
+    @Get('/:id')
+    @UseGuards(JwtAuthGuard)
+    @ApiBearerAuth()
+    @ApiOperation({ summary: 'Get full details of a specific notification' })
+    @ApiResponse({
+        status: 200,
+        description: 'Notification details',
+        type: Notification,
+    })
+    @ApiResponse({ status: 404, description: 'Notification not found' })
+    async findOne(
+        @Param('id') id: string,
+        @Req() req: AuthenticatedRequest,
+    ): Promise<Notification> {
+        return this.notificationService.findOneByIdAndUser(id, req.user.userId);
     }
 }
