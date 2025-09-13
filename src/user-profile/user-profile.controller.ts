@@ -26,7 +26,9 @@ export class UserProfileController {
         description: 'User profile details successfully retrieved.',
         schema: {
             example: {
+                id: 1,
                 email: 'user@example.com',
+                role: 'user',
                 fullName: 'John Doe',
                 department: 'Computer Science',
                 phone: '123-456-7890',

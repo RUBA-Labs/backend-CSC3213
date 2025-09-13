@@ -7,6 +7,7 @@ import { UpdateUserProfileDto } from './dto/update-user-profile.dto';
 import { UserService } from '../user/user.service';
 import * as bcrypt from 'bcrypt';
 import { ChangePasswordDto } from './dto/change-password.dto';
+import { Role } from '../user/role.enum';
 
 @Injectable()
 export class UserProfileService {
@@ -59,7 +60,9 @@ export class UserProfileService {
     }
 
     async getUserDetails(userId: number): Promise<{
+        id: number;
         email: string;
+        role: Role;
         fullName?: string;
         department?: string;
         phone?: string;
@@ -69,7 +72,9 @@ export class UserProfileService {
             throw new NotFoundException(`User with ID ${userId} not found`);
         }
         return {
+            id: user.id,
             email: user.email,
+            role: user.role,
             fullName: user.fullName,
             department: user.department,
             phone: user.phone,
