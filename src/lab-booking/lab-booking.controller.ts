@@ -21,6 +21,7 @@ import {
 } from '@nestjs/swagger';
 import { CreateLabBookingDto } from './dto/create-lab-booking.dto';
 import { AuthenticatedRequest } from '../auth/interfaces/authenticated-request.interface';
+import { LabSessionBookingStatus } from './interfaces/lab-session-booking-status.interface';
 
 @ApiTags('Lab Booking')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -41,7 +42,7 @@ export class LabBookingController {
     )
     async getLabSessionBookingStatus(
         @Param('labSessionId') labSessionId: string,
-    ) {
+    ): Promise<LabSessionBookingStatus> {
         return this.labBookingService.getLabSessionBookingStatus(labSessionId);
     }
 

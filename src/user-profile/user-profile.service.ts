@@ -7,6 +7,7 @@ import { UpdateUserProfileDto } from './dto/update-user-profile.dto';
 import { UserService } from '../user/user.service';
 import * as bcrypt from 'bcrypt';
 import { ChangePasswordDto } from './dto/change-password.dto';
+import { Role } from '../user/role.enum';
 
 @Injectable()
 export class UserProfileService {
@@ -52,28 +53,16 @@ export class UserProfileService {
             throw new BadRequestException('Invalid old password');
         }
 
-        const hashedNewPassword = await bcrypt.hash(
-            changePasswordDto.newPassword,
-            10,
-        );
-        // user.password = hashedNewPassword; // Remove this line
-
         // Pass the plain new password to userService.update, which will handle hashing
         await this.userService.update(userId, {
             password: changePasswordDto.newPassword,
         });
-
-        // Re-fetch the user to ensure we have the latest data from the database
-        const updatedUser = await this.userService.findOne(userId);
-
-        // console.log('New plain password:', changePasswordDto.newPassword);
-        // console.log('New hashed password after storage:', updatedUser.password);
-        // const isNewPasswordMatch = await bcrypt.compare(changePasswordDto.newPassword, updatedUser.password);
-        // console.log('New password matches stored hash:', isNewPasswordMatch);
     }
 
     async getUserDetails(userId: number): Promise<{
+        id: number;
         email: string;
+        role: Role;
         fullName?: string;
         department?: string;
         phone?: string;
@@ -83,7 +72,9 @@ export class UserProfileService {
             throw new NotFoundException(`User with ID ${userId} not found`);
         }
         return {
+            id: user.id,
             email: user.email,
+            role: user.role,
             fullName: user.fullName,
             department: user.department,
             phone: user.phone,
