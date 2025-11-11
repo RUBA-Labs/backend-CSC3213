@@ -8,6 +8,8 @@ import {
     Patch,
     ParseIntPipe,
     UseGuards,
+    Query,
+    DefaultValuePipe,
 } from '@nestjs/common';
 import { ThrottlerGuard } from '@nestjs/throttler';
 import { UserService } from './user.service';
@@ -19,6 +21,7 @@ import {
     ApiResponse,
     ApiBearerAuth,
     ApiBody,
+    ApiQuery,
 } from '@nestjs/swagger';
 import { Roles } from '../auth/roles.decorator';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -42,6 +45,98 @@ export class UserController {
     @ApiResponse({ status: 400, description: 'Bad request.' })
     create(@Body() createUserDto: CreateUserDto) {
         return this.userService.create(createUserDto);
+    }
+
+    @Get('search-by-role')
+    @Roles(Role.ADMIN, Role.DEVELOPER)
+    @ApiBearerAuth()
+    @ApiOperation({ summary: 'Search for users by role with pagination' })
+    @ApiQuery({
+        name: 'role',
+        required: true,
+        description: 'The role to search for',
+    })
+    @ApiQuery({
+        name: 'page',
+        required: false,
+        description: 'The page number',
+        type: Number,
+    })
+    @ApiResponse({
+        status: 200,
+        description: 'Return a paginated list of users matching the search.',
+    })
+    searchByRole(
+        @Query('role') role: string,
+        @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    ) {
+        return this.userService.searchByRole(role, page);
+    }
+
+    @Get('search-by-email')
+    @Roles(Role.ADMIN, Role.DEVELOPER)
+    @ApiBearerAuth()
+    @ApiOperation({ summary: 'Search for users by email with pagination' })
+    @ApiQuery({
+        name: 'email',
+        required: true,
+        description: 'The email to search for',
+    })
+    @ApiQuery({
+        name: 'page',
+        required: false,
+        description: 'The page number',
+        type: Number,
+    })
+    @ApiResponse({
+        status: 200,
+        description: 'Return a paginated list of users matching the search.',
+    })
+    searchByEmail(
+        @Query('email') email: string,
+        @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    ) {
+        return this.userService.searchByEmail(email, page);
+    }
+
+    @Get('search')
+    @Roles(Role.ADMIN, Role.DEVELOPER)
+    @ApiBearerAuth()
+    @ApiOperation({ summary: 'Search for users by name with pagination' })
+    @ApiQuery({
+        name: 'name',
+        required: true,
+        description: 'The name to search for',
+    })
+    @ApiQuery({
+        name: 'page',
+        required: false,
+        description: 'The page number',
+        type: Number,
+    })
+    @ApiResponse({
+        status: 200,
+        description: 'Return a paginated list of users matching the search.',
+    })
+    searchByName(
+        @Query('name') name: string,
+        @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    ) {
+        return this.userService.searchByName(name, page);
+    }
+
+    @Get('paged')
+    @Roles(Role.ADMIN, Role.DEVELOPER)
+    @ApiBearerAuth()
+    @ApiOperation({ summary: 'Retrieve users with pagination' })
+    @ApiResponse({
+        status: 200,
+        description: 'Return a paginated list of users.',
+    })
+    findPaged(
+        @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    ) {
+        return this.userService.findPaged(page);
     }
 
     @Get()

@@ -5,7 +5,7 @@ import {
     BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, Like } from 'typeorm';
 import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -84,6 +84,82 @@ export class UserService {
         }
 
         return Role.USER;
+    }
+
+    async searchByRole(
+        role: string,
+        page: number,
+    ): Promise<{ users: User[]; haveMoreUsers: boolean }> {
+        const limit = 15;
+        const offset = (page - 1) * limit;
+
+        const queryBuilder = this.userRepository.createQueryBuilder('user');
+
+        const [users, total] = await queryBuilder
+            .where('user.role LIKE :role', { role: `%${role}%` })
+            .skip(offset)
+            .take(limit)
+            .getManyAndCount();
+
+        const haveMoreUsers = page * limit < total;
+
+        return { users, haveMoreUsers };
+    }
+
+    async searchByEmail(
+        email: string,
+        page: number,
+    ): Promise<{ users: User[]; haveMoreUsers: boolean }> {
+        const limit = 15;
+        const offset = (page - 1) * limit;
+
+        const [users, total] = await this.userRepository.findAndCount({
+            where: {
+                email: Like(`%${email}%`),
+            },
+            skip: offset,
+            take: limit,
+        });
+
+        const haveMoreUsers = page * limit < total;
+
+        return { users, haveMoreUsers };
+    }
+
+    async searchByName(
+        name: string,
+        page: number,
+    ): Promise<{ users: User[]; haveMoreUsers: boolean }> {
+        const limit = 15;
+        const offset = (page - 1) * limit;
+
+        const [users, total] = await this.userRepository.findAndCount({
+            where: {
+                fullName: Like(`%${name}%`),
+            },
+            skip: offset,
+            take: limit,
+        });
+
+        const haveMoreUsers = page * limit < total;
+
+        return { users, haveMoreUsers };
+    }
+
+    async findPaged(
+        page: number,
+    ): Promise<{ users: User[]; haveMoreUsers: boolean }> {
+        const limit = 15;
+        const offset = (page - 1) * limit;
+
+        const [users, total] = await this.userRepository.findAndCount({
+            skip: offset,
+            take: limit,
+        });
+
+        const haveMoreUsers = page * limit < total;
+
+        return { users, haveMoreUsers };
     }
 
     async findAll(): Promise<User[]> {
