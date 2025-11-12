@@ -4,6 +4,7 @@ import {
     BadRequestException,
 } from '@nestjs/common';
 import { UpdateUserProfileDto } from './dto/update-user-profile.dto';
+import { UpdateUserDto } from '../user/dto/update-user.dto';
 import { UserService } from '../user/user.service';
 import * as bcrypt from 'bcrypt';
 import { ChangePasswordDto } from './dto/change-password.dto';
@@ -22,18 +23,21 @@ export class UserProfileService {
             throw new NotFoundException(`User with ID ${userId} not found`);
         }
 
-        // Update only allowed fields
+        const fieldsToUpdate: Partial<UpdateUserDto> = {};
         if (updateUserProfileDto.fullName !== undefined) {
-            user.fullName = updateUserProfileDto.fullName;
+            fieldsToUpdate.fullName = updateUserProfileDto.fullName;
         }
         if (updateUserProfileDto.department !== undefined) {
-            user.department = updateUserProfileDto.department;
+            fieldsToUpdate.department = updateUserProfileDto.department;
         }
         if (updateUserProfileDto.phone !== undefined) {
-            user.phone = updateUserProfileDto.phone;
+            fieldsToUpdate.phone = updateUserProfileDto.phone;
         }
 
-        return this.userService.update(userId, user);
+        if (Object.keys(fieldsToUpdate).length > 0) {
+            return this.userService.update(userId, fieldsToUpdate);
+        }
+        return user;
     }
 
     async changePassword(
