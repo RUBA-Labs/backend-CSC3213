@@ -64,6 +64,22 @@ export class EmailValidationService {
             throw new BadRequestException('Email already exists.');
         }
 
+        return this._sendOtp(email, 'Your OTP for Email Verification');
+    }
+
+    async sendPasswordResetOtp(email: string): Promise<{ secret: string }> {
+        if (!this.validateEmailFormat()) {
+            throw new BadRequestException('Invalid email format.');
+        }
+
+        // No check for existing email, as it's expected for a password reset
+        return this._sendOtp(email, 'Your OTP for Password Reset');
+    }
+
+    private async _sendOtp(
+        email: string,
+        subject: string,
+    ): Promise<{ secret: string }> {
         const otp = crypto.randomInt(100000, 999999).toString(); // 6-digit OTP
         const secret = crypto.randomBytes(16).toString('hex'); // 16-byte hex secret
 
@@ -72,7 +88,7 @@ export class EmailValidationService {
         const mailOptions = {
             from: this.configService.get<string>('EMAIL_USER'),
             to: email,
-            subject: 'Your OTP for Email Verification',
+            subject: subject,
             text: `Your One-Time Password (OTP) is: ${otp}. This OTP is valid for 5 minutes.`,
         };
 

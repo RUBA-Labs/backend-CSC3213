@@ -34,7 +34,8 @@ export class PasswordResetService {
         }
 
         // 3. Send OTP to user
-        const { secret } = await this.emailValidationService.sendOtp(email);
+        const { secret } =
+            await this.emailValidationService.sendPasswordResetOtp(email);
         return { secret };
     }
 

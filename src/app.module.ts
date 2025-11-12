@@ -46,6 +46,8 @@ import { NotificationModule } from './notification/notification.module';
                 database: configService.get<string>('DB_NAME'),
                 autoLoadEntities: true,
                 synchronize: true,
+                retryAttempts: 3,
+                retryDelay: 3000,
             }),
             inject: [ConfigService],
         }),
