@@ -8,8 +8,8 @@ import {
 import { ComputerLab } from '../../computer-labs/entities/computer-lab.entity';
 
 export enum ComputerStatus {
-    ENABLED = 'enabled',
-    DISABLED = 'disabled',
+    functional = 'functional',
+    faulty = 'faulty',
 }
 
 @Entity('computers')
@@ -27,7 +27,7 @@ export class Computer {
     @Column({
         type: 'enum',
         enum: ComputerStatus,
-        default: ComputerStatus.ENABLED,
+        default: ComputerStatus.functional,
     })
     status: ComputerStatus;
 
