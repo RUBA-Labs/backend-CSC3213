@@ -4,9 +4,10 @@ import { ExamClaimsController } from './exam-claims.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from '../auth/auth.module';
 import { ExamClaim } from './entities/exam-claim.entity';
+import { ClaimItem } from './entities/claim-item.entity';
 
 @Module({
-  imports: [AuthModule, TypeOrmModule.forFeature([ExamClaim])],
+  imports: [AuthModule, TypeOrmModule.forFeature([ExamClaim, ClaimItem])],
   controllers: [ExamClaimsController],
   providers: [ExamClaimsService],
 })

@@ -20,6 +20,7 @@ import {
   ApiBody,
   ApiResponse,
 } from '@nestjs/swagger';
+import { AddClaimItemDto } from './dto/add-claim-item.dto';
 
 @ApiTags('Exam Claims')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -45,5 +46,22 @@ export class ExamClaimsController {
   ) {
     const user = { id: req.user.userId } as User;
     return this.examClaimsService.create(createExamClaimDto, user);
+  }
+
+  @Post('add-item')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Add a new item to an exam claim' })
+  @ApiBody({ type: AddClaimItemDto })
+  @ApiResponse({
+    status: 201,
+    description: 'The claim item has been successfully added.',
+  })
+  @ApiResponse({ status: 400, description: 'Bad Request.' })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiResponse({ status: 403, description: 'Forbidden.' })
+  @ApiResponse({ status: 404, description: 'Exam claim not found.' })
+  @Roles(Role.DEVELOPER, Role.ADMIN, Role.EXAM_CLAIMS_ADMIN, Role.ACADEMIC)
+  addClaimItem(@Body() addClaimItemDto: AddClaimItemDto) {
+    return this.examClaimsService.addClaimItem(addClaimItemDto);
   }
 }

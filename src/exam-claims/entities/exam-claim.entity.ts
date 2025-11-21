@@ -6,8 +6,10 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
 import { User } from '../../user/entities/user.entity';
+import { ClaimItem } from './claim-item.entity';
 
 @Entity()
 export class ExamClaim {
@@ -38,6 +40,9 @@ export class ExamClaim {
   @ManyToOne(() => User, (user) => user.examClaims)
   @JoinColumn({ name: 'user_id' })
   user: User;
+
+  @OneToMany(() => ClaimItem, (claimItem) => claimItem.examClaim)
+  claimItems: ClaimItem[];
 
   @CreateDateColumn()
   createdAt: Date;
