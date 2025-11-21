@@ -84,4 +84,31 @@ export class ExamClaimsService {
 
     return examClaim.claimItems;
   }
+
+  async getAllExamClaims(): Promise<ExamClaim[]> {
+    return this.examClaimsRepository.find({
+      relations: ['user', 'claimItems', 'claimItems.status'],
+    });
+  }
+
+  async getClaimItemsForCurrentUser(userId: number): Promise<any[]> {
+    const claimItems = await this.claimItemRepository
+      .createQueryBuilder('claimItem')
+      .leftJoinAndSelect('claimItem.examClaim', 'examClaim')
+      .leftJoinAndSelect('examClaim.user', 'user')
+      .leftJoinAndSelect('claimItem.status', 'status')
+      .where('user.id = :userId', { userId })
+      .select([
+        'claimItem.id AS id',
+        'claimItem.examName AS "Exam Name/Code"',
+        'claimItem.examDate AS "Exam Date"',
+        'claimItem.venue AS Venue',
+        'claimItem.amount AS Amount',
+        'status.status AS Status',
+        'examClaim.id AS claimId', // Foreign key from ExamClaim
+      ])
+      .getRawMany();
+
+    return claimItems;
+  }
 }

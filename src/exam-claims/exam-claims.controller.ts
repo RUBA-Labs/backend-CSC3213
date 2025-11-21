@@ -25,6 +25,7 @@ import {
 } from '@nestjs/swagger';
 import { AddClaimItemDto } from './dto/add-claim-item.dto';
 import { ClaimItem } from './entities/claim-item.entity';
+import { ExamClaim } from './entities/exam-claim.entity'; // Import ExamClaim for return type
 
 @ApiTags('Exam Claims')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -50,6 +51,35 @@ export class ExamClaimsController {
   ) {
     const user = { id: req.user.userId } as User;
     return this.examClaimsService.create(createExamClaimDto, user);
+  }
+
+  @Get()
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get all exam claims with all details' })
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully retrieved all exam claims.',
+    type: [ExamClaim],
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiResponse({ status: 403, description: 'Forbidden.' })
+  @Roles(Role.DEVELOPER, Role.ADMIN, Role.EXAM_CLAIMS_ADMIN) // Only these roles can view all claims
+  getAllExamClaims(): Promise<ExamClaim[]> {
+    return this.examClaimsService.getAllExamClaims();
+  }
+
+  @Get('my-items')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get all claim items for the current user' })
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully retrieved claim items for the current user.',
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiResponse({ status: 403, description: 'Forbidden.' })
+  @Roles(Role.DEVELOPER, Role.ADMIN, Role.EXAM_CLAIMS_ADMIN, Role.ACADEMIC)
+  getClaimItemsForCurrentUser(@Request() req: AuthenticatedRequest): Promise<any[]> {
+    return this.examClaimsService.getClaimItemsForCurrentUser(req.user.userId);
   }
 
   @Post('add-item')
