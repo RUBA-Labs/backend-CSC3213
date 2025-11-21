@@ -63,6 +63,17 @@ export class ComputersController {
         return this.computersService.findOne(id);
     }
 
+    @Get('lab/:id')
+    @Roles(Role.ADMIN, Role.DEVELOPER, Role.LAB_ALLOCATION_ADMIN)
+    @ApiBearerAuth()
+    @ApiOperation({ summary: 'Retrieve all computers by lab ID' })
+    @ApiResponse({ status: 200, description: 'Return the computers.' })
+    @ApiResponse({ status: 404, description: 'Computers not found.' })
+    @ApiResponse({ status: 403, description: 'Forbidden.' })
+    findByLabId(@Param('id') id: string) {
+        return this.computersService.findByLabId(id);
+    }
+
     @Patch(':id')
     @Roles(Role.ADMIN, Role.DEVELOPER, Role.LAB_ALLOCATION_ADMIN)
     @ApiBearerAuth()

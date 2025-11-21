@@ -9,7 +9,11 @@ async function bootstrap() {
     try {
         const app = await NestFactory.create(AppModule);
 
-        app.enableCors(); // Enable CORS
+        app.enableCors({
+            origin: '*', // Put your Next.js frontend URL here
+            methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+            credentials: true,
+        });
         app.useGlobalPipes(new ValidationPipe()); // Enable validation pipe
         app.useGlobalFilters(new AllExceptionsFilter()); // Enable global exception filter
 
