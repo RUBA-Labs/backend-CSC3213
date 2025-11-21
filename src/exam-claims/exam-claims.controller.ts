@@ -4,6 +4,8 @@ import {
   Body,
   UseGuards,
   Request,
+  Get,
+  Param,
 } from '@nestjs/common';
 import { ExamClaimsService } from './exam-claims.service';
 import { CreateExamClaimDto } from './dto/create-exam-claim.dto';
@@ -19,8 +21,10 @@ import {
   ApiBearerAuth,
   ApiBody,
   ApiResponse,
+  ApiParam,
 } from '@nestjs/swagger';
 import { AddClaimItemDto } from './dto/add-claim-item.dto';
+import { ClaimItem } from './entities/claim-item.entity';
 
 @ApiTags('Exam Claims')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -61,7 +65,24 @@ export class ExamClaimsController {
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   @ApiResponse({ status: 404, description: 'Exam claim not found.' })
   @Roles(Role.DEVELOPER, Role.ADMIN, Role.EXAM_CLAIMS_ADMIN, Role.ACADEMIC)
-  addClaimItem(@Body() addClaimItemDto: AddClaimItemDto) {
+  addClaimItem(@Body() addClaimItemDto: AddClaimItemDto): Promise<ClaimItem> {
     return this.examClaimsService.addClaimItem(addClaimItemDto);
+  }
+
+  @Get(':id/statuses')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get all statuses of claim items for a specific exam claim' })
+  @ApiParam({ name: 'id', description: 'ID of the Exam Claim', type: Number })
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully retrieved claim item statuses.',
+    type: [ClaimItem], // Assuming ClaimItem includes its status now due to relations
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiResponse({ status: 403, description: 'Forbidden.' })
+  @ApiResponse({ status: 404, description: 'Exam claim not found.' })
+  @Roles(Role.DEVELOPER, Role.ADMIN, Role.EXAM_CLAIMS_ADMIN, Role.ACADEMIC)
+  getClaimItemStatuses(@Param('id') id: number): Promise<ClaimItem[]> {
+    return this.examClaimsService.getClaimItemStatuses(id);
   }
 }

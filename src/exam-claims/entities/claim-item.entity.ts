@@ -3,11 +3,13 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { ExamClaim } from './exam-claim.entity';
+import { ClaimItemStatus } from './claim-item-status.entity';
 
 @Entity()
 export class ClaimItem {
@@ -29,6 +31,10 @@ export class ClaimItem {
   @ManyToOne(() => ExamClaim, (examClaim) => examClaim.claimItems)
   @JoinColumn({ name: 'claim_id' })
   examClaim: ExamClaim;
+
+  @OneToOne(() => ClaimItemStatus, (claimItemStatus) => claimItemStatus.claimItem, { cascade: true })
+  @JoinColumn({ name: 'status_id' }) // This column will hold the FK to ClaimItemStatus
+  status: ClaimItemStatus;
 
   @CreateDateColumn()
   createdAt: Date;
