@@ -18,6 +18,7 @@ import { LabSessionsModule } from './lab-sessions/lab-sessions.module';
 import { LabBookingModule } from './lab-booking/lab-booking.module';
 import { NotificationModule } from './notification/notification.module';
 import { ExamClaimsModule } from './exam-claims/exam-claims.module';
+import { AnnouncementsModule } from './announcements/announcements.module';
 
 @Module({
     imports: [
@@ -66,6 +67,7 @@ import { ExamClaimsModule } from './exam-claims/exam-claims.module';
         LabBookingModule,
         NotificationModule,
         ExamClaimsModule,
+        AnnouncementsModule,
     ],
     controllers: [AppController],
     providers: [AppService],
