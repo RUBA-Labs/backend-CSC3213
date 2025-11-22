@@ -22,7 +22,7 @@ export class ClaimItemStatus {
   })
   status: ClaimItemStatusValue;
 
-  @OneToOne(() => ClaimItem, (claimItem) => claimItem.status)
+  @OneToOne(() => ClaimItem, (claimItem) => claimItem.status, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'claim_item_id' })
   claimItem: ClaimItem;
 

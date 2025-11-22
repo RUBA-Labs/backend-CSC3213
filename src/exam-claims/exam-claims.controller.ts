@@ -6,6 +6,9 @@ import {
   Request,
   Get,
   Param,
+  Patch,
+  Delete,
+  HttpCode,
 } from '@nestjs/common';
 import { ExamClaimsService } from './exam-claims.service';
 import { CreateExamClaimDto } from './dto/create-exam-claim.dto';
@@ -26,6 +29,7 @@ import {
 import { AddClaimItemDto } from './dto/add-claim-item.dto';
 import { ClaimItem } from './entities/claim-item.entity';
 import { ExamClaim } from './entities/exam-claim.entity'; // Import ExamClaim for return type
+import { UpdateClaimItemStatusDto } from './dto/update-claim-item-status.dto';
 
 @ApiTags('Exam Claims')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -66,6 +70,21 @@ export class ExamClaimsController {
   @Roles(Role.DEVELOPER, Role.ADMIN, Role.EXAM_CLAIMS_ADMIN) // Only these roles can view all claims
   getAllExamClaims(): Promise<ExamClaim[]> {
     return this.examClaimsService.getAllExamClaims();
+  }
+
+  @Get('items')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get all exam claim items' })
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully retrieved all exam claim items.',
+    type: [ClaimItem],
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiResponse({ status: 403, description: 'Forbidden.' })
+  @Roles(Role.DEVELOPER, Role.ADMIN, Role.EXAM_CLAIMS_ADMIN)
+  getAllClaimItems(): Promise<ClaimItem[]> {
+    return this.examClaimsService.getAllClaimItems();
   }
 
   @Get('my-items')
@@ -114,5 +133,46 @@ export class ExamClaimsController {
   @Roles(Role.DEVELOPER, Role.ADMIN, Role.EXAM_CLAIMS_ADMIN, Role.ACADEMIC)
   getClaimItemStatuses(@Param('id') id: number): Promise<ClaimItem[]> {
     return this.examClaimsService.getClaimItemStatuses(id);
+  }
+
+  @Patch('item/:id/status')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Update the status of a claim item' })
+  @ApiParam({ name: 'id', description: 'ID of the Claim Item', type: Number })
+  @ApiBody({ type: UpdateClaimItemStatusDto })
+  @ApiResponse({
+    status: 200,
+    description: 'The claim item status has been successfully updated.',
+  })
+  @ApiResponse({ status: 400, description: 'Bad Request.' })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiResponse({ status: 403, description: 'Forbidden.' })
+  @ApiResponse({ status: 404, description: 'Claim item not found.' })
+  @Roles(Role.DEVELOPER, Role.ADMIN, Role.EXAM_CLAIMS_ADMIN)
+  updateClaimItemStatus(
+    @Param('id') id: number,
+    @Body() updateClaimItemStatusDto: UpdateClaimItemStatusDto,
+  ) {
+    return this.examClaimsService.updateClaimItemStatus(
+      id,
+      updateClaimItemStatusDto,
+    );
+  }
+
+  @Delete('item/:id')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Delete a claim item' })
+  @ApiParam({ name: 'id', description: 'ID of the Claim Item', type: Number })
+  @ApiResponse({
+    status: 204,
+    description: 'The claim item has been successfully deleted.',
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiResponse({ status: 403, description: 'Forbidden.' })
+  @ApiResponse({ status: 404, description: 'Claim item not found.' })
+  @Roles(Role.DEVELOPER, Role.ADMIN, Role.EXAM_CLAIMS_ADMIN)
+  @HttpCode(204)
+  deleteClaimItem(@Param('id') id: number): Promise<void> {
+    return this.examClaimsService.deleteClaimItem(id);
   }
 }
