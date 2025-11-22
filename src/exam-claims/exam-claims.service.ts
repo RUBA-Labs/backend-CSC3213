@@ -8,6 +8,7 @@ import { ClaimItem } from './entities/claim-item.entity';
 import { AddClaimItemDto } from './dto/add-claim-item.dto';
 import { ClaimItemStatus } from './entities/claim-item-status.entity';
 import { ClaimItemStatusValue } from './entities/claim-item-status.enum';
+import { UpdateClaimItemStatusDto } from './dto/update-claim-item-status.dto';
 
 @Injectable()
 export class ExamClaimsService {
@@ -72,6 +73,35 @@ export class ExamClaimsService {
     }
   }
 
+  async updateClaimItemStatus(
+    id: number,
+    updateClaimItemStatusDto: UpdateClaimItemStatusDto,
+  ): Promise<ClaimItemStatus> {
+    const { newStatus } = updateClaimItemStatusDto;
+
+    const claimItem = await this.claimItemRepository.findOne({
+      where: { id },
+      relations: ['status'],
+    });
+
+    if (!claimItem) {
+      throw new NotFoundException(`ClaimItem with ID ${id} not found`);
+    }
+
+    if (!claimItem.status) {
+      // This case should ideally not happen if a status is always created with a claim item.
+      // However, to handle this gracefully:
+      const newStatusEntity = this.claimItemStatusRepository.create({
+        status: newStatus,
+        claimItem: claimItem,
+      });
+      return this.claimItemStatusRepository.save(newStatusEntity);
+    }
+
+    claimItem.status.status = newStatus;
+    return this.claimItemStatusRepository.save(claimItem.status);
+  }
+
   async getClaimItemStatuses(examClaimId: number): Promise<ClaimItem[]> {
     const examClaim = await this.examClaimsRepository.findOne({
       where: { id: examClaimId },
@@ -88,6 +118,12 @@ export class ExamClaimsService {
   async getAllExamClaims(): Promise<ExamClaim[]> {
     return this.examClaimsRepository.find({
       relations: ['user', 'claimItems', 'claimItems.status'],
+    });
+  }
+
+  async getAllClaimItems(): Promise<ClaimItem[]> {
+    return this.claimItemRepository.find({
+      relations: ['examClaim', 'examClaim.user', 'status'],
     });
   }
 
