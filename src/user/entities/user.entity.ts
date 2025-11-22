@@ -4,9 +4,11 @@ import {
     Column,
     CreateDateColumn,
     UpdateDateColumn,
+    OneToMany,
 } from 'typeorm';
 
 import { Role } from '../role.enum';
+import { ExamClaim } from '../../exam-claims/entities/exam-claim.entity';
 
 @Entity()
 export class User {
@@ -30,6 +32,9 @@ export class User {
 
     @Column({ nullable: true })
     phone?: string;
+
+    @OneToMany(() => ExamClaim, (examClaim) => examClaim.user)
+    examClaims: ExamClaim[];
 
     @CreateDateColumn()
     createdAt: Date;

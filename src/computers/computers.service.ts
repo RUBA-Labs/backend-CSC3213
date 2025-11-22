@@ -19,22 +19,40 @@ export class ComputersService {
     ) {}
 
     async create(createComputerDto: CreateComputerDto): Promise<Computer> {
-        const { labId, ...rest } = createComputerDto;
-        const computerLab = await this.computerLabsService.findOne(labId); // Validate labId
-        if (!computerLab) {
-            throw new BadRequestException(
-                `Computer Lab with ID "${labId}" not found`,
-            );
-        }
-        const computer = this.computerRepository.create({
-            ...rest,
-            labId: computerLab.labId,
-        });
-        return this.computerRepository.save(computer);
+    const { labId, ...rest } = createComputerDto;
+    
+    // Validate labId exists
+    const computerLab = await this.computerLabsService.findOne(labId);
+    if (!computerLab) {
+        throw new BadRequestException(
+            `Computer Lab with ID "${labId}" not found`,
+        );
     }
+    
+    // Create computer with the provided labId
+    const computer = this.computerRepository.create({
+        ...rest,
+        labId: labId,  // ← Use the provided labId directly
+    });
+    
+    return this.computerRepository.save(computer);
+}
 
     findAll(): Promise<Computer[]> {
         return this.computerRepository.find({ relations: ['computerLab'] });
+    }
+
+    async findByLabId(labId: string): Promise<Computer[]> {
+        const computers = await this.computerRepository.find({
+            where: { labId },
+            relations: ['computerLab'],
+        });
+        if (computers.length === 0) {
+            throw new NotFoundException(
+                `No computers found for Lab ID "${labId}"`,
+            );
+        }
+        return computers;
     }
 
     async findOne(computerId: string): Promise<Computer> {

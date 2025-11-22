@@ -17,6 +17,7 @@ import { ComputersModule } from './computers/computers.module';
 import { LabSessionsModule } from './lab-sessions/lab-sessions.module';
 import { LabBookingModule } from './lab-booking/lab-booking.module';
 import { NotificationModule } from './notification/notification.module';
+import { ExamClaimsModule } from './exam-claims/exam-claims.module';
 
 @Module({
     imports: [
@@ -64,6 +65,7 @@ import { NotificationModule } from './notification/notification.module';
         LabSessionsModule,
         LabBookingModule,
         NotificationModule,
+        ExamClaimsModule,
     ],
     controllers: [AppController],
     providers: [AppService],

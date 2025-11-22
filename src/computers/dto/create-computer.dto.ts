@@ -11,9 +11,9 @@ export class CreateComputerDto {
     labId: string;
 
     @ApiProperty({
-        description: 'The status of the computer (enabled or disabled).',
+        description: 'The status of the computer (functional or faulty).',
         enum: ComputerStatus,
-        default: ComputerStatus.ENABLED,
+        default: ComputerStatus.functional,
     })
     @IsEnum(ComputerStatus)
     @IsOptional()
