@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseGuards, Request } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Request, Get } from '@nestjs/common';
 import { AnnouncementsService } from './announcements.service';
 import { CreateAnnouncementDto } from './dto/create-announcement.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -36,5 +36,17 @@ export class AnnouncementsController {
   ) {
     const user = { id: req.user.userId } as User;
     return this.announcementsService.create(createAnnouncementDto, user);
+  }
+
+  @Get('my-announcements')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get all announcements created by the current user' })
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully retrieved all announcements for the current user.',
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  findAllByCreator(@Request() req: AuthenticatedRequest) {
+    return this.announcementsService.findAllByCreator(req.user.userId);
   }
 }

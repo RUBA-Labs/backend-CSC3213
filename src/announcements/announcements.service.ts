@@ -37,7 +37,13 @@ export class AnnouncementsService {
 
     const usersToNotify = await this.getUsersToNotify(selectedViewer);
 
-    const senderDetails = `\n\n--\nSent by:\nName: ${fullCreator.fullName}\nRole: ${fullCreator.role}\nEmail: ${fullCreator.email}`;
+    const senderDetails = `
+
+--
+Sent by:
+Name: ${fullCreator.fullName}
+Role: ${fullCreator.role}
+Email: ${fullCreator.email}`;
     const notificationDescription = message + senderDetails;
 
     for (const user of usersToNotify) {
@@ -59,5 +65,12 @@ export class AnnouncementsService {
     } else {
       return allUsers.filter(user => user.role === selectedViewer);
     }
+  }
+
+  async findAllByCreator(creatorId: number): Promise<Announcement[]> {
+    return this.announcementsRepository.find({
+      where: { creator: { id: creatorId } },
+      relations: ['creator'],
+    });
   }
 }
