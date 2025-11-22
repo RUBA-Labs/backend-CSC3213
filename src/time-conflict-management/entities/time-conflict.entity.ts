@@ -20,6 +20,9 @@ export class TimeConflict {
   @Column()
   reason_description: string;
 
+  @Column({ default: false })
+  is_viewed: boolean;
+
   @Column()
   request_create_user_id: number;
 

@@ -1,5 +1,5 @@
 
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { TimeConflict } from './entities/time-conflict.entity';
@@ -45,5 +45,16 @@ export class TimeConflictManagementService {
     return this.timeConflictRepository.find({
       relations: ['availableSlots', 'requestByUser'], // Load related entities
     });
+  }
+
+  async updateViewStatus(id: number, isViewed: boolean): Promise<TimeConflict> {
+    const timeConflict = await this.timeConflictRepository.findOne({ where: { id } });
+
+    if (!timeConflict) {
+      throw new NotFoundException(`Time Conflict Request with ID ${id} not found`);
+    }
+
+    timeConflict.is_viewed = isViewed;
+    return this.timeConflictRepository.save(timeConflict);
   }
 }
