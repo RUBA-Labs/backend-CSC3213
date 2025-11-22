@@ -30,7 +30,7 @@ export class LabSession {
     @Column()
     labId: string; // Foreign key column
 
-    @ManyToOne(() => ComputerLab)
+    @ManyToOne(() => ComputerLab, { onDelete: 'CASCADE' })
     @JoinColumn({ name: 'labId' }) // Specify the foreign key column
     computerLab: ComputerLab;
 }
