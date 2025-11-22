@@ -1,15 +1,9 @@
 
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  Query,
-  ParseIntPipe,
-} from '@nestjs/common';
+import { ParseIntPipe, UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { RolesGuard } from 'src/auth/roles.guard';
+import { Roles } from 'src/auth/roles.decorator';
+import { Role } from 'src/user/role.enum';
 import { TimetableManagementService } from './timetable-management.service';
 import { CreateScheduleDto, DayOfWeek } from './dto/create-schedule.dto';
 import { UpdateScheduleDto } from './dto/update-schedule.dto';
@@ -17,6 +11,8 @@ import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
+@ApiTags('TimetableManagement')
+@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('timetable-management')
 export class TimetableManagementController {
   constructor(
@@ -26,6 +22,7 @@ export class TimetableManagementController {
   // Schedule endpoints
   @ApiTags('TimetableManagement')
   @Post('schedule')
+  @Roles(Role.ADMIN, Role.TIME_TABLE_ADMIN, Role.DEVELOPER)
   @ApiOperation({ summary: 'Registers a new academic schedule entry with details like room, course, day, and time.' })
   @ApiResponse({ status: 201, description: 'The schedule has been successfully created.' })
   @ApiResponse({ status: 400, description: 'Bad Request.' })
@@ -59,6 +56,7 @@ export class TimetableManagementController {
 
   @ApiTags('TimetableManagement')
   @Patch('schedule/:id')
+  @Roles(Role.ADMIN, Role.TIME_TABLE_ADMIN, Role.DEVELOPER)
   @ApiOperation({ summary: 'Modifies an existing academic schedule entry with provided updated details.' })
   updateSchedule(
     @Param('id', ParseIntPipe) id: number,
@@ -69,6 +67,7 @@ export class TimetableManagementController {
 
   @ApiTags('TimetableManagement')
   @Delete('schedule/:id')
+  @Roles(Role.ADMIN, Role.TIME_TABLE_ADMIN, Role.DEVELOPER)
   @ApiOperation({ summary: 'Removes an academic schedule entry from the system using its unique identifier.' })
   removeSchedule(@Param('id', ParseIntPipe) id: number) {
     return this.timetableManagementService.removeSchedule(id);
@@ -77,6 +76,7 @@ export class TimetableManagementController {
   // Room endpoints
   @ApiTags('TimetableManagement')
   @Post('room')
+  @Roles(Role.ADMIN, Role.TIME_TABLE_ADMIN, Role.DEVELOPER)
   @ApiOperation({ summary: 'Registers a new physical room for timetable management.' })
   createRoom(@Body() createRoomDto: CreateRoomDto) {
     return this.timetableManagementService.createRoom(createRoomDto);
@@ -98,6 +98,7 @@ export class TimetableManagementController {
 
   @ApiTags('TimetableManagement')
   @Patch('room/:id')
+  @Roles(Role.ADMIN, Role.TIME_TABLE_ADMIN, Role.DEVELOPER)
   @ApiOperation({ summary: 'Modifies an existing room\'s details.' })
   updateRoom(
     @Param('id', ParseIntPipe) id: number,
@@ -108,6 +109,7 @@ export class TimetableManagementController {
 
   @ApiTags('TimetableManagement')
   @Delete('room/:id')
+  @Roles(Role.ADMIN, Role.TIME_TABLE_ADMIN, Role.DEVELOPER)
   @ApiOperation({ summary: 'Removes a room from the system using its unique identifier.' })
   removeRoom(@Param('id', ParseIntPipe) id: number) {
     return this.timetableManagementService.removeRoom(id);
