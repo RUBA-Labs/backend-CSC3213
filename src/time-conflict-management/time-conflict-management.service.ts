@@ -40,4 +40,10 @@ export class TimeConflictManagementService {
       relations: ['availableSlots'],
     }))!;
   }
+
+  async findAllTimeConflicts(): Promise<TimeConflict[]> {
+    return this.timeConflictRepository.find({
+      relations: ['availableSlots', 'requestByUser'], // Load related entities
+    });
+  }
 }

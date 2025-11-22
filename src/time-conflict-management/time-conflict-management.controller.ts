@@ -1,5 +1,5 @@
 
-import { Controller, Post, Body, Req, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, Req, UseGuards, Get } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { CreateTimeConflictDto } from './dto/create-time-conflict.dto';
@@ -29,5 +29,15 @@ export class TimeConflictManagementController {
       createTimeConflictDto,
       userId,
     );
+  }
+
+  @UseGuards(JwtAuthGuard) // It's already applied at controller level, but explicitly adding here for clarity, though it's not strictly necessary.
+  @ApiBearerAuth()
+  @Get()
+  @ApiOperation({ summary: 'Retrieve all time conflict requests' })
+  @ApiResponse({ status: 200, description: 'Successfully retrieved all time conflict requests.' })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  async findAllTimeConflicts() {
+    return this.timeConflictManagementService.findAllTimeConflicts();
   }
 }
