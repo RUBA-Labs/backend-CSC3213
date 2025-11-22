@@ -7,6 +7,8 @@ import {
   Get,
   Param,
   Patch,
+  Delete,
+  HttpCode,
 } from '@nestjs/common';
 import { ExamClaimsService } from './exam-claims.service';
 import { CreateExamClaimDto } from './dto/create-exam-claim.dto';
@@ -155,5 +157,22 @@ export class ExamClaimsController {
       id,
       updateClaimItemStatusDto,
     );
+  }
+
+  @Delete('item/:id')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Delete a claim item' })
+  @ApiParam({ name: 'id', description: 'ID of the Claim Item', type: Number })
+  @ApiResponse({
+    status: 204,
+    description: 'The claim item has been successfully deleted.',
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiResponse({ status: 403, description: 'Forbidden.' })
+  @ApiResponse({ status: 404, description: 'Claim item not found.' })
+  @Roles(Role.DEVELOPER, Role.ADMIN, Role.EXAM_CLAIMS_ADMIN)
+  @HttpCode(204)
+  deleteClaimItem(@Param('id') id: number): Promise<void> {
+    return this.examClaimsService.deleteClaimItem(id);
   }
 }

@@ -127,6 +127,16 @@ export class ExamClaimsService {
     });
   }
 
+  async deleteClaimItem(id: number): Promise<void> {
+    const claimItem = await this.claimItemRepository.findOne({ where: { id } });
+
+    if (!claimItem) {
+      throw new NotFoundException(`ClaimItem with ID ${id} not found`);
+    }
+
+    await this.claimItemRepository.remove(claimItem);
+  }
+
   async getClaimItemsForCurrentUser(userId: number): Promise<any[]> {
     const claimItems = await this.claimItemRepository
       .createQueryBuilder('claimItem')

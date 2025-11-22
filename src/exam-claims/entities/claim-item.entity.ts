@@ -33,7 +33,6 @@ export class ClaimItem {
   examClaim: ExamClaim;
 
   @OneToOne(() => ClaimItemStatus, (claimItemStatus) => claimItemStatus.claimItem, { cascade: true })
-  @JoinColumn({ name: 'status_id' }) // This column will hold the FK to ClaimItemStatus
   status: ClaimItemStatus;
 
   @CreateDateColumn()
