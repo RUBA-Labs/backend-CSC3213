@@ -7,6 +7,7 @@ import {
     Req,
     Param,
     HttpCode,
+    Delete,
 } from '@nestjs/common';
 import { NotificationService } from './notification.service';
 import { CreateNotificationDto } from './dto/create-notification.dto';
@@ -16,7 +17,8 @@ import {
     ApiBody,
     ApiResponse,
     ApiBearerAuth,
-} from '@nestjs/swagger';
+}
+ from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { AuthenticatedRequest } from '../auth/interfaces/authenticated-request.interface';
 import { NotificationDto } from './dto/notification.dto';
@@ -122,5 +124,20 @@ export class NotificationController {
         @Req() req: AuthenticatedRequest,
     ): Promise<Notification> {
         return this.notificationService.findOneByIdAndUser(id, req.user.userId);
+    }
+
+    @Delete('/:id')
+    @UseGuards(JwtAuthGuard)
+    @ApiBearerAuth()
+    @ApiOperation({ summary: 'Delete a notification (only if it belongs to the current user)' })
+    @ApiResponse({ status: 204, description: 'Notification successfully deleted.' })
+    @ApiResponse({ status: 401, description: 'Unauthorized.' })
+    @ApiResponse({ status: 404, description: 'Notification not found or does not belong to the user.' })
+    @HttpCode(204)
+    async remove(
+      @Param('id') id: string,
+      @Req() req: AuthenticatedRequest,
+    ): Promise<void> {
+      return this.notificationService.remove(id, req.user.userId);
     }
 }
