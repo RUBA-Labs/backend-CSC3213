@@ -1,10 +1,11 @@
-import { Controller, Post, Body, UseGuards, Req, ParseArrayPipe } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Req, ParseArrayPipe, Get } from '@nestjs/common';
 import { MyCourseSelectService } from './my-course-select.service';
 import { CreateMyCourseDto } from './dto/create-my-course.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { AuthenticatedRequest } from 'src/auth/interfaces/authenticated-request.interface';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { MyCourse } from './entities/my-course.entity';
+import { MyCourseResponseDto } from './dto/my-course-response.dto';
 
 @ApiTags('MyCourseSelect')
 @ApiBearerAuth()
@@ -32,7 +33,7 @@ export class MyCourseSelectController {
               course_code: { type: 'string', example: 'CSC3213' },
               course_name: { type: 'string', example: 'Project in Computer Science I' },
             },
-            required: ['course_code', 'course_name'],
+            required: ['course_code'],
           },
         },
       },
@@ -47,5 +48,16 @@ export class MyCourseSelectController {
   ) {
     const userId = req.user.userId;
     return this.myCourseSelectService.addCourses(createMyCourseDto, userId);
+  }
+
+  @Get('available-courses')
+  @ApiOperation({
+    summary: 'Get all available unique courses',
+    description: 'Returns a list of all unique courses that have been selected by any user, providing only the course ID and code.'
+  })
+  @ApiResponse({ status: 200, description: 'A list of available courses.', type: [MyCourseResponseDto] })
+  @ApiResponse({ status: 401, description: 'Unauthorized. JWT token is missing or invalid.' })
+  getAllAvailableCourses() {
+    return this.myCourseSelectService.findAllAvailableCourses();
   }
 }

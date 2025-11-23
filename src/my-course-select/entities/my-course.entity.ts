@@ -12,8 +12,8 @@ export class MyCourse {
   @Column()
   course_code: string;
 
-  @ApiProperty({ description: 'The name of the course', example: 'Project in Computer Science I' })
-  @Column()
+  @ApiProperty({ description: 'The name of the course (can be null)', example: 'Project in Computer Science I', nullable: true })
+  @Column({ nullable: true })
   course_name: string;
 
   @ApiProperty({ description: 'The ID of the user who selected the course', example: 1 })

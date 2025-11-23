@@ -7,8 +7,7 @@ export class CreateMyCourseDto {
   @IsNotEmpty()
   course_code: string;
 
-  @ApiProperty({ description: 'The name of the course', example: 'Project in Computer Science I' })
+  @ApiProperty({ description: 'The name of the course (optional)', example: 'Project in Computer Science I', required: false })
   @IsString()
-  @IsNotEmpty()
-  course_name: string;
+  course_name?: string;
 }
