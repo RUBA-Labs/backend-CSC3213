@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseGuards, Req, ParseArrayPipe, Get } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Req, ParseArrayPipe, Get, Delete, Param } from '@nestjs/common';
 import { MyCourseSelectService } from './my-course-select.service';
 import { CreateMyCourseDto } from './dto/create-my-course.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
@@ -48,6 +48,28 @@ export class MyCourseSelectController {
   ) {
     const userId = req.user.userId;
     return this.myCourseSelectService.addCourses(createMyCourseDto, userId);
+  }
+
+  @Get('my-courses')
+  @ApiOperation({
+    summary: 'Get all courses for the current user',
+    description: 'Returns a list of all courses that the currently authenticated user has selected.'
+  })
+  @ApiResponse({ status: 200, description: 'A list of courses for the current user.', type: [MyCourse] })
+  @ApiResponse({ status: 401, description: 'Unauthorized. JWT token is missing or invalid.' })
+  getMyCourses(@Req() req: AuthenticatedRequest) {
+    const userId = req.user.userId;
+    return this.myCourseSelectService.findAllByUserId(userId);
+  }
+
+  @Delete(':id')
+  @ApiOperation({ summary: 'Delete a course for the current user' })
+  @ApiResponse({ status: 200, description: 'Course deleted successfully.' })
+  @ApiResponse({ status: 404, description: 'Course not found for this user.' })
+  @ApiResponse({ status: 401, description: 'Unauthorized. JWT token is missing or invalid.' })
+  remove(@Param('id') id: string, @Req() req: AuthenticatedRequest) {
+    const userId = req.user.userId;
+    return this.myCourseSelectService.remove(+id, userId);
   }
 
   @Get('available-courses')

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { MyCourse } from './entities/my-course.entity';
@@ -24,6 +24,18 @@ export class MyCourseSelectService {
     });
 
     return this.myCourseRepository.save(coursesToSave);
+  }
+
+  async findAllByUserId(userId: number): Promise<MyCourse[]> {
+    return this.myCourseRepository.find({ where: { user_id: userId } });
+  }
+
+  async remove(id: number, userId: number): Promise<void> {
+    const course = await this.myCourseRepository.findOne({ where: { id, user_id: userId } });
+    if (!course) {
+      throw new NotFoundException(`Course with ID ${id} not found for this user.`);
+    }
+    await this.myCourseRepository.remove(course);
   }
 
   async findAllAvailableCourses(): Promise<{ id: number; course_code: string }[]> {
