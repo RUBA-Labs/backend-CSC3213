@@ -1,0 +1,13 @@
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { MyCourseSelectService } from './my-course-select.service';
+import { MyCourseSelectController } from './my-course-select.controller';
+import { MyCourse } from './entities/my-course.entity';
+import { AuthModule } from 'src/auth/auth.module';
+
+@Module({
+  imports: [TypeOrmModule.forFeature([MyCourse]), AuthModule],
+  controllers: [MyCourseSelectController],
+  providers: [MyCourseSelectService],
+})
+export class MyCourseSelectModule {}

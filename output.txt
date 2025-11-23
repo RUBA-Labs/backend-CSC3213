@@ -1,0 +1,1 @@
+I have updated the `findScheduleByDayAndTime` endpoint in `TimetableManagementController` and `TimetableManagementService` to include an optional `id` parameter. You can now filter schedule entries by day, time, and `schedule id`.

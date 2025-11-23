@@ -1,0 +1,8 @@
+I have updated the API documentation for the `MyCourseSelect` module.
+
+Specifically:
+1.  I added `@ApiProperty` decorators to the `MyCourse` entity, so its schema will be correctly displayed in the Swagger UI.
+2.  I updated the controller to include a detailed `@ApiBody` decorator, which clearly shows the expected request format, including the new `{ "courses": [...] }` structure.
+3.  I improved the `@ApiOperation` and `@ApiResponse` decorators to provide more descriptive text and to document the shape of the successful response.
+
+Your API documentation should now be much clearer for this endpoint.

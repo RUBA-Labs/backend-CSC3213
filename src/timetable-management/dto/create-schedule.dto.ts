@@ -33,12 +33,12 @@ export class CreateScheduleDto {
   @ApiProperty({ description: 'The start time in HH:MM:SS format', example: '09:00:00' })
   @IsString()
   @IsNotEmpty()
-  @Matches(/^([01]d|2[0-3]):([0-5]d):([0-5]d)$/)
+  @Matches(/^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/)
   start_time: string;
 
   @ApiProperty({ description: 'The end time in HH:MM:SS format', example: '11:00:00' })
   @IsString()
   @IsNotEmpty()
-  @Matches(/^([01]d|2[0-3]):([0-5]d):([0-5]d)$/)
+  @Matches(/^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/)
   end_time: string;
 }

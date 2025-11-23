@@ -21,6 +21,7 @@ import { ExamClaimsModule } from './exam-claims/exam-claims.module';
 import { AnnouncementsModule } from './announcements/announcements.module';
 import { TimetableManagementModule } from './timetable-management/timetable-management.module';
 import { TimeConflictManagementModule } from './time-conflict-management/time-conflict.module';
+import { MyCourseSelectModule } from './my-course-select/my-course-select.module';
 
 @Module({
     imports: [
@@ -72,6 +73,7 @@ import { TimeConflictManagementModule } from './time-conflict-management/time-co
         AnnouncementsModule,
         TimetableManagementModule,
         TimeConflictManagementModule,
+        MyCourseSelectModule,
     ],
     controllers: [AppController],
     providers: [AppService],

@@ -9,6 +9,7 @@ import {
 
 import { Role } from '../role.enum';
 import { ExamClaim } from '../../exam-claims/entities/exam-claim.entity';
+import { MyCourse } from '../../my-course-select/entities/my-course.entity';
 import { TimeConflict } from '../../time-conflict-management/entities/time-conflict.entity';
 
 @Entity()
@@ -39,6 +40,9 @@ export class User {
 
     @OneToMany(() => TimeConflict, (timeConflict) => timeConflict.requestByUser)
     timeConflicts: TimeConflict[];
+
+    @OneToMany(() => MyCourse, (myCourse) => myCourse.user)
+    myCourses: MyCourse[];
 
     @CreateDateColumn()
     createdAt: Date;
