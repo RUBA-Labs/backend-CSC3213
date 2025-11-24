@@ -18,7 +18,7 @@ export class LabBooking {
     @Column()
     labSessionId: string;
 
-    @ManyToOne(() => LabSession)
+    @ManyToOne(() => LabSession, { onDelete: 'CASCADE' })
     @JoinColumn({ name: 'labSessionId' })
     labSession: LabSession;
 
