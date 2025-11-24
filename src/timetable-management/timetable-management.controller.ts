@@ -20,8 +20,9 @@ import { CreateScheduleDto, DayOfWeek } from './dto/create-schedule.dto';
 import { UpdateScheduleDto } from './dto/update-schedule.dto';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
+@ApiBearerAuth()
 @ApiTags('TimetableManagement')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('timetable-management')

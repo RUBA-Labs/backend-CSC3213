@@ -32,6 +32,7 @@ export class TimetableManagementService {
     return this.scheduleRepository
       .createQueryBuilder('s')
       .select([
+        's.id',
         'r.location_code',
         'r.room_name',
         's.course_code',

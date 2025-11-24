@@ -1,0 +1,18 @@
+Thank you for providing the `available_courses` table schema.
+
+I have reviewed the schema you provided:
+```
+id	int	NO	PRI		auto_increment
+course_code	varchar(255)	NO	UNI		
+course_name	varchar(255)	YES
+```
+
+There was a slight mismatch with the `AvailableCourse` entity I created. The `course_name` was defined as `NOT NULL`, while your schema indicates it should be nullable (`YES`).
+
+I have corrected this in `src/my-course-select/entities/available-course.entity.ts`. The `course_name` column is now defined with `{ nullable: true }` to perfectly match your database schema.
+
+-   `id`: `@PrimaryGeneratedColumn()` correctly creates an `int`, `NOT NULL`, `PRIMARY KEY`, `AUTO_INCREMENT` column.
+-   `course_code`: `@Column()` and `@Unique(['course_code'])` correctly maps to `varchar(255)`, `NOT NULL`, `UNIQUE`.
+-   `course_name`: `@Column({ nullable: true })` now correctly creates a `varchar(255)`, `NULL` column.
+
+The `AvailableCourse` entity now fully matches your `available_courses` table schema.
