@@ -20,16 +20,26 @@ import { CreateScheduleDto, DayOfWeek } from './dto/create-schedule.dto';
 import { UpdateScheduleDto } from './dto/update-schedule.dto';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
+import { GenerateTimetableDto } from './dto/generate-timetable.dto';
 import { ApiBearerAuth, ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
 @ApiBearerAuth()
-@ApiTags('TimetableManagement')
+@ApiTags('TimetableManagement', 'AI')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('timetable-management')
 export class TimetableManagementController {
   constructor(
     private readonly timetableManagementService: TimetableManagementService,
   ) {}
+
+  @Post('generate-timetable')
+  @Roles(Role.ADMIN, Role.TIME_TABLE_ADMIN, Role.DEVELOPER)
+  @ApiOperation({ summary: 'Generate a timetable using an AI prompt.' })
+  @ApiResponse({ status: 201, description: 'The timetable has been successfully generated.' })
+  @ApiResponse({ status: 400, description: 'Bad Request.' })
+  generateTimetable(@Body() generateTimetableDto: GenerateTimetableDto) {
+    return this.timetableManagementService.generateTimetable(generateTimetableDto.prompt);
+  }
 
   // Schedule endpoints
   @ApiTags('TimetableManagement')

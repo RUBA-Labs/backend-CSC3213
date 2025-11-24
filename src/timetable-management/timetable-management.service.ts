@@ -8,6 +8,11 @@ import { Schedule } from './entities/schedule.entity';
 import { Room } from './entities/room.entity';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
+import { exec } from 'child_process';
+import { promisify } from 'util';
+
+const execAsync = promisify(exec);
+
 
 @Injectable()
 export class TimetableManagementService {
@@ -17,6 +22,22 @@ export class TimetableManagementService {
     @InjectRepository(Room)
     private readonly roomRepository: Repository<Room>,
   ) {}
+
+  async generateTimetable(prompt: string): Promise<string> {
+    const hardcodedPrompt = 'This is the full description about the timetable of the art faculty. Please generate a timetable based on the following information:';
+    const mergedPrompt = `${hardcodedPrompt}\n\n${prompt}`;
+    
+    try {
+      const { stdout, stderr } = await execAsync(`gemini -p "${mergedPrompt}"`);
+      if (stderr) {
+        throw new Error(stderr);
+      }
+      console.log(stdout);
+      return stdout;
+    } catch (error) {
+      throw new Error(`Failed to execute gemini-cli: ${error.message}`);
+    }
+  }
 
   // Schedule CRUD
   createSchedule(createScheduleDto: CreateScheduleDto): Promise<Schedule> {
