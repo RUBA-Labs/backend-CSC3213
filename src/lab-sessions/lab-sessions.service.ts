@@ -39,6 +39,21 @@ export class LabSessionsService {
         return this.labSessionRepository.find({ relations: ['computerLab'] });
     }
 
+    async findByLabId(labId: string): Promise<LabSession[]> {
+    const sessions = await this.labSessionRepository.find({
+      where: { labId },
+      relations: ['computerLab'], // Include lab details if needed
+    });
+
+    if (!sessions || sessions.length === 0) {
+      throw new NotFoundException(
+        `No Lab Sessions found for Lab ID "${labId}"`,
+      );
+    }
+
+    return sessions;
+  }
+
     async findOne(sessionId: string): Promise<LabSession> {
         const labSession = await this.labSessionRepository.findOne({
             where: { sessionId },

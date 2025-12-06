@@ -52,10 +52,23 @@ export class LabSessionsController {
         return this.labSessionsService.findAll();
     }
 
+    // 👇 NEW ENDPOINT ADDED HERE 👇
+    @Get('lab/:labId') 
+    @Roles(Role.ADMIN, Role.DEVELOPER, Role.LAB_ALLOCATION_ADMIN, Role.ACADEMIC)
+    @ApiBearerAuth()
+    @ApiOperation({ summary: 'Retrieve all sessions for a specific Lab ID' })
+    @ApiResponse({ status: 200, description: 'Return list of sessions for the lab.' })
+    @ApiResponse({ status: 404, description: 'No sessions found for this lab.' })
+    @ApiResponse({ status: 403, description: 'Forbidden.' })
+    findByLabId(@Param('labId') labId: string) {
+        return this.labSessionsService.findByLabId(labId);
+    }
+    // 👆 END OF NEW ENDPOINT 👆
+
     @Get(':id')
     @Roles(Role.ADMIN, Role.DEVELOPER, Role.LAB_ALLOCATION_ADMIN, Role.ACADEMIC)
     @ApiBearerAuth()
-    @ApiOperation({ summary: 'Retrieve a single lab session by ID' })
+    @ApiOperation({ summary: 'Retrieve a single lab session by Session ID' })
     @ApiResponse({ status: 200, description: 'Return the lab session.' })
     @ApiResponse({ status: 404, description: 'Lab session not found.' })
     @ApiResponse({ status: 403, description: 'Forbidden.' })
